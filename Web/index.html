@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TikTok Shop Affiliate · BI Dashboard</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#F0F2F7;color:#1A1A2E;font-size:14px;}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+
+/* === LAYOUT === */
+.db-shell{max-width:1400px;margin:0 auto;padding:14px;}
+
+/* === HEADER === */
+.db-header{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:#fff;border-radius:12px;border:0.5px solid #E2E6F0;margin-bottom:12px;gap:12px;flex-wrap:wrap;}
+.logo-row{display:flex;align-items:center;gap:10px;}
+.logo-pill{width:34px;height:34px;border-radius:8px;background:linear-gradient(135deg,#FE2C55,#FF6B8B);display:flex;align-items:center;justify-content:center;}
+.logo-pill i{color:#fff;font-size:18px;}
+.logo-text{font-size:15px;font-weight:600;color:#1A1A2E;line-height:1.2;}
+.logo-sub{font-size:11px;color:#6B7280;font-weight:400;}
+.tab-bar{display:flex;gap:4px;background:#F3F4F6;padding:4px;border-radius:10px;}
+.db-tab{padding:6px 18px;font-size:12px;border-radius:7px;cursor:pointer;border:none;background:transparent;color:#6B7280;transition:all .18s;font-weight:500;display:flex;align-items:center;gap:5px;}
+.db-tab i{font-size:13px;}
+.db-tab.active{background:#fff;color:#2563EB;border:0.5px solid #2563EB;box-shadow:0 1px 3px rgba(0,0,0,.06);font-weight:600;}
+.db-meta{font-size:11px;color:#9CA3AF;display:flex;align-items:center;gap:5px;}
+
+/* === NSM BANNER === */
+.nsm-strip{display:flex;align-items:center;gap:20px;padding:11px 16px;background:#fff;border-radius:10px;border:0.5px solid #E2E6F0;border-left:3px solid #2563EB;margin-bottom:12px;flex-wrap:wrap;}
+.nsm-label{font-size:9px;text-transform:uppercase;letter-spacing:.9px;color:#9CA3AF;margin-bottom:2px;}
+.nsm-val{font-size:22px;font-weight:700;color:#2563EB;letter-spacing:-0.5px;}
+.nsm-divider{width:1px;height:36px;background:#E9EBF0;flex-shrink:0;}
+.nsm-desc{font-size:11.5px;color:#6B7280;line-height:1.6;max-width:420px;}
+.nsm-desc strong{color:#1A1A2E;}
+.nsm-rate{margin-left:auto;text-align:right;}
+.nsm-rate .nsm-label{text-align:right;}
+.nsm-rate .nsm-val{font-size:17px;color:#1A1A2E;}
+
+/* === KPI GRID === */
+.kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:12px;}
+.kpi-card{background:#fff;border-radius:10px;padding:13px 14px;border:0.5px solid #E2E6F0;border-top:3px solid #ccc;position:relative;overflow:hidden;}
+.kpi-card::after{content:'';position:absolute;right:-10px;top:-10px;width:60px;height:60px;border-radius:50%;background:rgba(0,0,0,.025);}
+.kpi-lbl{font-size:10px;color:#9CA3AF;text-transform:uppercase;letter-spacing:.6px;margin-bottom:5px;display:flex;align-items:center;gap:5px;}
+.kpi-lbl i{font-size:13px;}
+.kpi-num{font-size:21px;font-weight:700;color:#1A1A2E;margin-bottom:4px;letter-spacing:-0.5px;line-height:1;}
+.kpi-num span{font-size:12px;font-weight:400;color:#9CA3AF;}
+.kpi-chg{font-size:11px;display:flex;align-items:center;gap:3px;margin-bottom:2px;}
+.kpi-chg.up{color:#059669;} .kpi-chg.down{color:#DC2626;} .kpi-chg.warn{color:#D97706;} .kpi-chg.neu{color:#6B7280;}
+.kpi-ctx{font-size:10px;color:#9CA3AF;}
+
+/* === CHART CARDS === */
+.row2{display:grid;grid-template-columns:1fr 290px;gap:12px;margin-bottom:12px;}
+.row-half{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+.row-full{margin-bottom:12px;}
+.cc{background:#fff;border-radius:10px;padding:15px;border:0.5px solid #E2E6F0;}
+.cc-title{font-size:13px;font-weight:600;color:#1A1A2E;margin-bottom:2px;}
+.cc-sub{font-size:10.5px;color:#9CA3AF;margin-bottom:10px;}
+.cc-legend{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:10px;}
+.leg-dot{width:10px;height:10px;border-radius:2px;display:inline-block;margin-right:4px;flex-shrink:0;}
+.leg-item{display:flex;align-items:center;font-size:10.5px;color:#6B7280;}
+
+/* === INSIGHT PANEL === */
+.insight-panel{background:#F8F9FF;border-radius:10px;padding:14px;border:0.5px solid #DDE3FF;}
+.insight-header{font-size:12px;font-weight:600;color:#1A1A2E;margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+.insight-item{display:flex;gap:9px;margin-bottom:9px;padding-bottom:9px;border-bottom:0.5px solid #E8ECFF;}
+.insight-item:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none;}
+.insight-ico{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.insight-ico i{font-size:13px;}
+.insight-body{font-size:11px;color:#4B5563;line-height:1.5;}
+.insight-act{font-size:10.5px;font-weight:600;margin-top:3px;}
+
+/* === HEATMAP === */
+.hm-row{display:flex;gap:5px;margin-bottom:5px;align-items:center;}
+.hm-label{width:70px;font-size:10px;color:#6B7280;flex-shrink:0;}
+.hm-cell{flex:1;text-align:center;padding:9px 4px;border-radius:6px;font-size:11px;font-weight:600;}
+
+/* === RECON TABLE === */
+.recon-table{width:100%;border-collapse:collapse;font-size:12px;}
+.recon-table th{padding:8px 10px;text-align:right;font-weight:500;color:#9CA3AF;border-bottom:1px solid #F0F0F0;font-size:11px;}
+.recon-table th:first-child{text-align:left;}
+.recon-table td{padding:8px 10px;color:#1A1A2E;border-bottom:0.5px solid #F5F5F5;text-align:right;}
+.recon-table td:first-child{text-align:left;color:#374151;}
+.recon-table tfoot td{font-weight:600;background:#F9FAFB;border-top:1px solid #E9EBF0;}
+.badge{padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;white-space:nowrap;}
+.b-ok{background:#D1FAE5;color:#065F46;} .b-warn{background:#FEF3C7;color:#92400E;} .b-err{background:#FEE2E2;color:#991B1B;} .b-info{background:#DBEAFE;color:#1E3A8A;}
+
+/* === TREEMAP === */
+.treemap-wrap{display:flex;height:100px;gap:3px;border-radius:8px;overflow:hidden;margin-bottom:12px;}
+.tmap-blk{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px;}
+.tmap-name{font-size:11px;font-weight:600;text-align:center;}
+.tmap-share{font-size:18px;font-weight:700;}
+.tmap-val{font-size:9px;opacity:.8;}
+
+/* === ALERT CARDS === */
+.alert-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.alert-card{border-radius:8px;padding:12px;border:0.5px solid transparent;}
+.ac-red{border-left:3px solid #EF4444;background:#FEF2F2;border-color:#FECACA;}
+.ac-orange{border-left:3px solid #D97706;background:#FFFBEB;border-color:#FDE68A;}
+.ac-green{border-left:3px solid #16A34A;background:#ECFDF5;border-color:#A7F3D0;}
+.ac-title{font-size:11.5px;font-weight:600;margin-bottom:4px;display:flex;align-items:center;gap:5px;}
+.ac-body{font-size:10.5px;line-height:1.55;}
+.ac-action{font-size:10px;font-weight:600;margin-top:6px;}
+
+/* === PERFORMANCE TABLE === */
+.perf-tbl{width:100%;border-collapse:collapse;font-size:11.5px;}
+.perf-tbl th{padding:6px 8px;text-align:left;font-weight:500;color:#9CA3AF;border-bottom:0.5px solid #F0F0F0;font-size:10.5px;}
+.perf-tbl td{padding:6px 8px;color:#374151;border-bottom:0.5px solid #F8F8F8;}
+.perf-bar{height:5px;border-radius:3px;margin-top:3px;}
+
+/* === SECTION TITLE === */
+.section-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;margin-bottom:12px;}
+
+/* === CONCENTRATION RISK WIDGET === */
+.conc-risk{padding:10px 12px;background:#FEF2F2;border-radius:8px;border:0.5px solid #FECACA;margin-top:10px;}
+.conc-bar{height:8px;border-radius:4px;overflow:hidden;display:flex;margin-top:6px;}
+
+/* === DAX / DATA PANEL === */
+.data-panel{background:#fff;border-radius:10px;border:0.5px solid #E2E6F0;margin-bottom:12px;overflow:hidden;}
+.dp-header{padding:12px 16px;background:#F9FAFB;border-bottom:0.5px solid #E9EBF0;display:flex;align-items:center;justify-content:space-between;cursor:pointer;}
+.dp-header:hover{background:#F3F4F6;}
+.dp-body{padding:16px;display:none;}
+.dp-body.open{display:block;}
+pre.code-block{background:#1E1E2E;color:#CDD6F4;padding:14px;border-radius:8px;font-size:11px;line-height:1.7;overflow-x:auto;font-family:'Cascadia Code','Fira Code',monospace;}
+pre.code-block .kw{color:#CBA6F7;} pre.code-block .fn{color:#89DCEB;} pre.code-block .str{color:#A6E3A1;} pre.code-block .cmt{color:#6C7086;}
+
+.tag-pill{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:12px;font-size:10px;font-weight:500;}
+
+/* STARS SCHEMA */
+.schema-diagram{display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap;padding:10px;}
+.schema-fact{padding:12px 18px;background:#EFF6FF;border-radius:8px;border:2px solid #2563EB;text-align:center;min-width:130px;}
+.schema-dim{padding:9px 14px;background:#EFF6FF;border-radius:8px;border:0.5px solid #BFDBFE;text-align:center;min-width:100px;font-size:11px;}
+.schema-arrow{font-size:18px;color:#9CA3AF;margin:0 8px;}
+.schema-dims{display:flex;flex-direction:column;gap:8px;}
+</style>
+</head>
+<body>
+<h2 class="sr-only">TikTok Shop Affiliate BI Dashboard — Executive & Operational Views. Dữ liệu 6 tháng từ Dec 2024 đến Jun 2025.</h2>
+<div class="db-shell">
+
+  <!-- ============ HEADER ============ -->
+  <div class="db-header">
+    <div class="logo-row">
+      <div class="logo-pill"><i class="ti ti-brand-tiktok" aria-hidden="true"></i></div>
+      <div>
+        <div class="logo-text">TikTok Shop Affiliate <span style="font-weight:400;color:#9CA3AF;">· BI Dashboard</span></div>
+        <div class="logo-sub">Creator Commission Management · Dữ liệu thực tế · Dec 2024 – Jun 2025</div>
+      </div>
+    </div>
+    <div class="tab-bar" role="tablist">
+      <button class="db-tab active" id="btn-executive" onclick="switchTab('executive',this)" role="tab" aria-selected="true" aria-controls="tab-executive">
+        <i class="ti ti-chart-dots-3" aria-hidden="true"></i>Executive
+      </button>
+      <button class="db-tab" id="btn-operational" onclick="switchTab('operational',this)" role="tab" aria-selected="false" aria-controls="tab-operational">
+        <i class="ti ti-report-money" aria-hidden="true"></i>Operational
+      </button>
+      <button class="db-tab" id="btn-docs" onclick="switchTab('docs',this)" role="tab" aria-selected="false" aria-controls="tab-docs">
+        <i class="ti ti-book-2" aria-hidden="true"></i>BI Design
+      </button>
+    </div>
+    <div class="db-meta"><i class="ti ti-clock" aria-hidden="true"></i>Kỳ: 6 months · T6/2025 partial</div>
+  </div>
+
+  <!-- ============ NSM BANNER ============ -->
+  <div class="nsm-strip" role="complementary" aria-label="North Star Metric">
+    <div>
+      <div class="nsm-label">⭐ North Star Metric</div>
+      <div style="font-size:13px;font-weight:600;color:#1A1A2E;">Actual Commission Base</div>
+    </div>
+    <div class="nsm-divider"></div>
+    <div>
+      <div class="nsm-label">Tổng 6 kỳ báo cáo</div>
+      <div class="nsm-val">5,636 triệu VND</div>
+    </div>
+    <div class="nsm-divider"></div>
+    <div class="nsm-desc">
+      NSM được chọn vì phản ánh <strong>doanh thu thực tế kích hoạt hoa hồng</strong> — không bị biến dạng bởi cơ chế PIT hay chia sẻ. Đây là chỉ số duy nhất đồng thời đo được <strong>sức kéo của Creator</strong> và <strong>hiệu quả của sản phẩm</strong>.
+    </div>
+    <div class="nsm-rate">
+      <div class="nsm-label" style="text-align:right">Comm. Rate trung bình</div>
+      <div class="nsm-val" style="font-size:20px;color:#1A1A2E;">10.74%</div>
+      <div style="font-size:10px;color:#9CA3AF;">605.5M ÷ 5,636M</div>
+    </div>
+  </div>
+
+  <!-- ==================== EXECUTIVE TAB ==================== -->
+  <div id="tab-executive" role="tabpanel" aria-labelledby="btn-executive">
+
+    <div class="section-badge" style="background:#EFF6FF;color:#1E3A8A;">
+      <i class="ti ti-chart-line" aria-hidden="true"></i> Executive Dashboard — Tổng quan chiến lược · Dành cho: Chủ DN · Quản lý · Giảng viên
+    </div>
+
+    <!-- ROW 1 — KPI CARDS -->
+    <div class="kpi-grid" role="region" aria-label="Chỉ số KPI chính">
+      <div class="kpi-card" style="border-top-color:#2563EB;">
+        <div class="kpi-lbl"><i class="ti ti-currency-dong" style="color:#2563EB" aria-hidden="true"></i>Total GMV</div>
+        <div class="kpi-num">5,636 <span>tr VND</span></div>
+        <div class="kpi-chg down"><i class="ti ti-trending-down" aria-hidden="true"></i>−36.2% T5 vs T4</div>
+        <div class="kpi-ctx">Peak T2: 1,551tr · Đang giảm mạnh</div>
+      </div>
+      <div class="kpi-card" style="border-top-color:#16A34A;">
+        <div class="kpi-lbl"><i class="ti ti-receipt-2" style="color:#16A34A" aria-hidden="true"></i>Total Commission</div>
+        <div class="kpi-num">605.5 <span>tr VND</span></div>
+        <div class="kpi-chg down"><i class="ti ti-trending-down" aria-hidden="true"></i>−29.9% T5 vs T4</div>
+        <div class="kpi-ctx">Rate hiệu quả: 10.74% GMV</div>
+      </div>
+      <div class="kpi-card" style="border-top-color:#2563EB;">
+        <div class="kpi-lbl"><i class="ti ti-shopping-bag" style="color:#2563EB" aria-hidden="true"></i>Total Orders</div>
+        <div class="kpi-num">39,458</div>
+        <div class="kpi-chg down"><i class="ti ti-trending-down" aria-hidden="true"></i>−49.3% T5 vs T4</div>
+        <div class="kpi-ctx">Avg: 6,576/tháng · T2 peak: 15,417</div>
+      </div>
+      <div class="kpi-card" style="border-top-color:#F59E0B;">
+        <div class="kpi-lbl"><i class="ti ti-arrow-back-up" style="color:#F59E0B" aria-hidden="true"></i>Refund Rate</div>
+        <div class="kpi-num">0.15 <span>%</span></div>
+        <div class="kpi-chg warn"><i class="ti ti-alert-triangle" aria-hidden="true"></i>T5: 0.42% (+282%!)</div>
+        <div class="kpi-ctx">Tổng 61 đơn hoàn / 40,898 qty</div>
+      </div>
+      <div class="kpi-card" style="border-top-color:#D97706;">
+        <div class="kpi-lbl"><i class="ti ti-users" style="color:#D97706" aria-hidden="true"></i>Active Creators</div>
+        <div class="kpi-num">3</div>
+        <div class="kpi-chg neu"><i class="ti ti-minus" aria-hidden="true"></i>Không thay đổi 6 tháng</div>
+        <div class="kpi-ctx" style="color:#DC2626;font-weight:600;">⚠ Rủi ro tập trung CỰC CAO</div>
+      </div>
+    </div>
+
+    <!-- ROW 2 — TREND + INSIGHTS -->
+    <div class="row2">
+      <div class="cc">
+        <div class="cc-title">GMV & Commission Trend — 6 Kỳ Báo Cáo</div>
+        <div class="cc-sub">Actual Commission Base (GMV thực tế) vs Hoa hồng thực nhận · Leading + Lagging Indicators</div>
+        <div class="cc-legend">
+          <div class="leg-item"><span class="leg-dot" style="background:#2563EB;"></span>GMV – Actual Comm. Base (trục trái)</div>
+          <div class="leg-item"><span class="leg-dot" style="background:#16A34A;border:1px dashed #16A34A;"></span>Commission thực tế (trục phải)</div>
+        </div>
+        <div style="position:relative;width:100%;height:230px;">
+          <canvas id="trendChart" role="img" aria-label="Biểu đồ đường GMV giảm từ 1,531 triệu xuống 153 triệu VND trong 6 kỳ. Commission cũng giảm song song từ 162 xuống 21.6 triệu.">GMV và Commission đều giảm dần từ T2 đến T6.</canvas>
+        </div>
+      </div>
+      <div class="insight-panel" role="complementary" aria-label="Strategic Insights">
+        <div class="insight-header"><i class="ti ti-bulb" style="color:#F59E0B;font-size:15px" aria-hidden="true"></i>Strategic Insights</div>
+        <div class="insight-item">
+          <div class="insight-ico" style="background:#FEE2E2;"><i class="ti ti-alert-circle" style="color:#DC2626;" aria-hidden="true"></i></div>
+          <div>
+            <div class="insight-body">Top 2 creators = <strong>99.9%</strong> commission. 1 creator dừng → business sụp đổ.</div>
+            <div class="insight-act" style="color:#DC2626;">→ Tuyển 5-8 KOL mới ngay</div>
+          </div>
+        </div>
+        <div class="insight-item">
+          <div class="insight-ico" style="background:#FEF3C7;"><i class="ti ti-trending-down" style="color:#D97706;" aria-hidden="true"></i></div>
+          <div>
+            <div class="insight-body">GMV giảm <strong>90%</strong> từ đỉnh T2→T6. Active creators không tăng = bottleneck tăng trưởng.</div>
+            <div class="insight-act" style="color:#D97706;">→ Diversify creator pool</div>
+          </div>
+        </div>
+        <div class="insight-item">
+          <div class="insight-ico" style="background:#ECFDF5;"><i class="ti ti-video" style="color:#059669;" aria-hidden="true"></i></div>
+          <div>
+            <div class="insight-body">Livestream: 11.1% đơn nhưng <strong>43.5%</strong> commission → Tỷ lệ chuyển đổi cao nhất.</div>
+            <div class="insight-act" style="color:#059669;">→ Scale Livestream 3-4x</div>
+          </div>
+        </div>
+        <div class="insight-item">
+          <div class="insight-ico" style="background:#EFF6FF;"><i class="ti ti-chart-bar" style="color:#1D4ED8;" aria-hidden="true"></i></div>
+          <div>
+            <div class="insight-body">OBG VN: commission/GMV = <strong>19.9%</strong> — cao nhất thị trường. Biên tốt, cần scale đơn.</div>
+            <div class="insight-act" style="color:#1D4ED8;">→ Push OBG products ưu tiên</div>
+          </div>
+        </div>
+        <div class="insight-item">
+          <div class="insight-ico" style="background:#FEF2F2;"><i class="ti ti-arrow-back-up" style="color:#DC2626;" aria-hidden="true"></i></div>
+          <div>
+            <div class="insight-body">Refund rate T5 = <strong>0.42%</strong> — bất thường nhất 6 tháng. Cần audit batch T5.</div>
+            <div class="insight-act" style="color:#DC2626;">→ Liên hệ shop kiểm tra T5</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROW 3 — CREATOR PERFORMANCE -->
+    <div class="row-half">
+      <div class="cc">
+        <div class="cc-title">Creator Performance — Commission Ranking</div>
+        <div class="cc-sub">Top creators theo commission thực tế · Sorted descending · 6 kỳ tổng hợp</div>
+        <div class="cc-legend">
+          <div class="leg-item"><span class="leg-dot" style="background:#1E3A8A;"></span>goc.cua.ru (Top 1)</div>
+          <div class="leg-item"><span class="leg-dot" style="background:#3B82F6;"></span>miibeo_ (Top 2)</div>
+          <div class="leg-item"><span class="leg-dot" style="background:#D1D5DB;"></span>anphuongtruong</div>
+        </div>
+        <div style="position:relative;width:100%;height:160px;">
+          <canvas id="creatorChart" role="img" aria-label="Biểu đồ ngang: goc.cua.ru 325.1 triệu, miibeo_ 279.9 triệu, anphuongtruong 0.5 triệu commission.">goc.cua.ru dẫn đầu với 325 triệu VND commission.</canvas>
+        </div>
+        <div class="conc-risk">
+          <div style="font-size:11px;font-weight:600;color:#991B1B;display:flex;align-items:center;gap:5px;"><i class="ti ti-alert-triangle" aria-hidden="true"></i>Creator Concentration Risk — HHI Index: 0.497 (Cực cao)</div>
+          <div class="conc-bar">
+            <div style="background:#DC2626;width:53.7%;"></div>
+            <div style="background:#F97316;width:46.2%;"></div>
+            <div style="background:#E5E7EB;width:0.1%;"></div>
+          </div>
+          <div style="font-size:10px;color:#991B1B;margin-top:4px;">53.7% + 46.2% = 99.9% · Ngưỡng an toàn HHI &lt; 0.25</div>
+        </div>
+      </div>
+      <div class="cc">
+        <div class="cc-title">Commission Share — Creator Dependency Map</div>
+        <div class="cc-sub">Mức độ phụ thuộc theo creator · Donut chart + Commission breakdown</div>
+        <div style="display:flex;gap:16px;align-items:center;">
+          <div style="position:relative;width:170px;height:170px;flex-shrink:0;">
+            <canvas id="creatorShareChart" role="img" aria-label="Biểu đồ tròn: goc.cua.ru 53.7%, miibeo_ 46.2%, anphuongtruong 0.1%">goc.cua.ru và miibeo_ chiếm gần như toàn bộ commission.</canvas>
+          </div>
+          <div style="flex:1;">
+            <table class="perf-tbl">
+              <thead><tr><th>Creator</th><th>Commission</th><th>Share</th></tr></thead>
+              <tbody>
+                <tr><td style="font-weight:500;">goc.cua.ru</td><td style="text-align:right;font-weight:600;">325.1M</td><td style="text-align:right;"><span class="badge b-err">53.7%</span></td></tr>
+                <tr><td style="font-weight:500;">miibeo_</td><td style="text-align:right;font-weight:600;">279.9M</td><td style="text-align:right;"><span class="badge b-warn">46.2%</span></td></tr>
+                <tr><td style="color:#9CA3AF;">anphuongtruong</td><td style="text-align:right;color:#9CA3AF;">0.5M</td><td style="text-align:right;"><span class="badge" style="background:#F3F4F6;color:#6B7280;">0.1%</span></td></tr>
+              </tbody>
+            </table>
+            <div style="margin-top:12px;padding:8px 10px;background:#FFFBEB;border-radius:6px;border:0.5px solid #FCD34D;">
+              <div style="font-size:10.5px;color:#92400E;line-height:1.5;"><strong>Leadning Indicator:</strong> Số creator active không tăng → commission growth sẽ chạm trần sớm. Cần thêm ít nhất 3-5 creator để phân tán rủi ro.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROW 4 — CONTENT TYPE -->
+    <div class="row-full">
+      <div class="cc">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:4px;">
+          <div>
+            <div class="cc-title">Content Type Performance — GMV & Commission</div>
+            <div class="cc-sub">4 loại content: Video · Livestream · Showcase · Link share · Hiệu quả trên 2 metrics</div>
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <span class="tag-pill" style="background:#FFF0F3;color:#9B1C1C;"><i class="ti ti-trending-up" aria-hidden="true"></i>Video: 86.2% đơn hàng</span>
+            <span class="tag-pill" style="background:#F0FDFA;color:#134E4A;"><i class="ti ti-flame" aria-hidden="true"></i>Livestream: Comm/GMV cao nhất</span>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+          <div>
+            <div class="cc-legend" style="margin-bottom:8px;">
+              <div class="leg-item"><span class="leg-dot" style="background:#2563EB;"></span>GMV (tỷ VND, trục trái)</div>
+              <div class="leg-item"><span class="leg-dot" style="background:#16A34A;border:1px dashed #16A34A;"></span>Commission (tr VND, trục phải)</div>
+            </div>
+            <div style="position:relative;width:100%;height:200px;">
+              <canvas id="contentChart" role="img" aria-label="Biểu đồ cột grouped: Video GMV 3.75 tỷ comm 310tr, Livestream GMV 1.62 tỷ comm 263tr, Showcase 258M/31.8tr, Link share gần 0.">Video có GMV và đơn hàng cao nhất, Livestream có commission rate/GMV cao hơn.</canvas>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:600;color:#6B7280;margin-bottom:8px;">Phân tích sâu: Commission Rate theo Content Type</div>
+            <table class="perf-tbl" style="font-size:11px;">
+              <thead><tr><th>Content</th><th style="text-align:right">GMV</th><th style="text-align:right">Commission</th><th style="text-align:right">Rate</th><th style="text-align:right">Đơn</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td style="font-weight:500;color:#2563EB;">Video</td>
+                  <td style="text-align:right">3,755M</td>
+                  <td style="text-align:right">310.4M</td>
+                  <td style="text-align:right"><span class="badge b-info">8.3%</span></td>
+                  <td style="text-align:right">34,023</td>
+                </tr>
+                <tr>
+                  <td style="font-weight:500;color:#16A34A;">Livestream</td>
+                  <td style="text-align:right">1,623M</td>
+                  <td style="text-align:right">263.3M</td>
+                  <td style="text-align:right"><span class="badge b-ok">16.2%</span></td>
+                  <td style="text-align:right">4,386</td>
+                </tr>
+                <tr>
+                  <td style="font-weight:500;color:#6366F1;">Showcase</td>
+                  <td style="text-align:right">258M</td>
+                  <td style="text-align:right">31.8M</td>
+                  <td style="text-align:right"><span class="badge" style="background:#F3E8FF;color:#6B21A8;">12.3%</span></td>
+                  <td style="text-align:right">1,041</td>
+                </tr>
+                <tr>
+                  <td style="color:#9CA3AF;">Link share</td>
+                  <td style="text-align:right;color:#9CA3AF;">0.3M</td>
+                  <td style="text-align:right;color:#9CA3AF;">0.02M</td>
+                  <td style="text-align:right"><span class="badge" style="background:#F3F4F6;color:#6B7280;">6.3%</span></td>
+                  <td style="text-align:right;color:#9CA3AF;">8</td>
+                </tr>
+              </tbody>
+            </table>
+            <div style="margin-top:10px;padding:8px 10px;background:#DCFCE7;border-radius:6px;border:0.5px solid #86EFAC;">
+              <div style="font-size:10.5px;color:#14532D;line-height:1.5;"><strong>Data Insight:</strong> Livestream commission rate (16.2%) gấp đôi Video (8.3%). Mặc dù ít đơn hơn, mỗi đồng GMV từ Livestream tạo ra hoa hồng cao gấp đôi. Đây là cơ hội lớn nhất để tối ưu biên lợi nhuận.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROW 5 — HEATMAP + SHOP -->
+    <div class="row-half">
+      <div class="cc">
+        <div class="cc-title">Risk Monitoring — Refund Rate Heatmap</div>
+        <div class="cc-sub">Phát hiện bất thường theo kỳ · Traffic light color system</div>
+        <div id="heatmapContainer" role="img" aria-label="Heatmap refund rate: T1 0.11%, T2 0.11%, T3 0.27%, T4 0.11%, T5 0.42% cao bất thường, T6 0.19%"></div>
+        <div style="margin-top:12px;padding:10px 12px;background:#FEF2F2;border-radius:8px;border:0.5px solid #FECACA;">
+          <div style="font-size:11px;font-weight:600;color:#991B1B;margin-bottom:3px;display:flex;align-items:center;gap:5px;"><i class="ti ti-alert-triangle" aria-hidden="true"></i>T5 Alert: Refund spike 0.42%</div>
+          <div style="font-size:10.5px;color:#7F1D1D;line-height:1.5;">Tháng 5 có refund rate cao bất thường (+282% vs T4). Chỉ 10 đơn hoàn nhưng với tổng đơn giảm (2,301 đơn), tỷ lệ % tăng mạnh. Cần kiểm tra: sản phẩm lỗi? giao hàng chậm? review của creator không đúng?</div>
+        </div>
+      </div>
+      <div class="cc">
+        <div class="cc-title">Top Shops — Commission Generated</div>
+        <div class="cc-sub">Top 8 shops theo hoa hồng tạo ra · 6 kỳ · OBG: biên cao nhất (19.9%)</div>
+        <div class="cc-legend">
+          <div class="leg-item"><span class="leg-dot" style="background:#2563EB;"></span>Commission (triệu VND)</div>
+        </div>
+        <div style="position:relative;width:100%;height:250px;">
+          <canvas id="shopChart" role="img" aria-label="Biểu đồ ngang top 8 shops: OBG VN 146.9M, Grace&Glow 91.5M, Moaw 54.9M, Hasol 51.8M, GlowCode 43.4M, Dentific 42.7M, Lilith 13.8M, MEDIHEAL 13.4M commission.">OBG Việt Nam dẫn đầu với 146.9 triệu VND commission trong 6 tháng.</canvas>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <!-- END EXECUTIVE TAB -->
+
+  <!-- ==================== OPERATIONAL TAB ==================== -->
+  <div id="tab-operational" role="tabpanel" aria-labelledby="btn-operational">
+
+    <div class="section-badge" style="background:#EFF6FF;color:#1E3A8A;">
+      <i class="ti ti-report-money" aria-hidden="true"></i> Operational Dashboard — Vận hành & Kế toán · Dành cho: Kế toán · Vận hành · AFF Manager
+    </div>
+
+    <!-- ROW 1 — OPERATIONAL KPIs -->
+    <div class="kpi-grid">
+      <div class="kpi-card" style="border-top-color:#2563EB;">
+        <div class="kpi-lbl"><i class="ti ti-bank" style="color:#2563EB" aria-hidden="true"></i>Total Bank Received</div>
+        <div class="kpi-num">453.2 <span>tr VND</span></div>
+        <div class="kpi-chg neu">7 kỳ từ TikTok</div>
+        <div class="kpi-ctx">Dec/24 – Jun/25 · TCB Account</div>
+      </div>
+      <div class="kpi-card" style="border-top-color:#16A34A;">
+        <div class="kpi-lbl"><i class="ti ti-check-box" style="color:#16A34A" aria-hidden="true"></i>Reconciliation Accuracy</div>
+        <div class="kpi-num">100 <span>%</span></div>
+        <div class="kpi-chg up"><i class="ti ti-circle-check" aria-hidden="true"></i>7/7 kỳ khớp hoàn toàn</div>
+        <div class="kpi-ctx">Chênh lệch = 0 VND · Minh bạch</div>
+      </div>
+      <div class="kpi-card" style="border-top-color:#F59E0B;">
+        <div class="kpi-lbl"><i class="ti ti-clock" style="color:#F59E0B" aria-hidden="true"></i>Pending (T6 est.)</div>
+        <div class="kpi-num">~21.6 <span>tr VND</span></div>
+        <div class="kpi-chg warn">T6 partial · chưa kết kỳ</div>
+        <div class="kpi-ctx">Commission T6 chưa đủ dữ liệu</div>
+      </div>
+      <div class="kpi-card" style="border-top-color:#16A34A;">
+        <div class="kpi-lbl"><i class="ti ti-users-group" style="color:#16A34A" aria-hidden="true"></i>AFF Commission Total</div>
+        <div class="kpi-num">12.2 <span>tr VND</span></div>
+        <div class="kpi-chg up"><i class="ti ti-trending-up" aria-hidden="true"></i>AFF6 T6: +354% vs AFF5</div>
+        <div class="kpi-ctx">AFF6 = 81% tổng AFF commission</div>
+      </div>
+      <div class="kpi-card" style="border-top-color:#2563EB;">
+        <div class="kpi-lbl"><i class="ti ti-timeline" style="color:#2563EB" aria-hidden="true"></i>Active AFF Campaigns</div>
+        <div class="kpi-num">5</div>
+        <div class="kpi-chg up"><i class="ti ti-trending-up" aria-hidden="true"></i>AFF6 mới nhất & lớn nhất</div>
+        <div class="kpi-ctx">AFF1–AFF6 · Brand Romano/Wipro</div>
+      </div>
+    </div>
+
+    <!-- ROW 2 — BANK RECONCILIATION -->
+    <div class="row-full">
+      <div class="cc">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <div>
+            <div class="cc-title">Bank Reconciliation Matrix — Đối soát TCB</div>
+            <div class="cc-sub">TikTok payout (IC + AFF) vs Bank statement · Mô phỏng dashboard kế toán thực tế</div>
+          </div>
+          <div style="display:flex;gap:6px;align-items:center;">
+            <span class="badge b-ok" style="padding:4px 10px;font-size:11px;"><i class="ti ti-circle-check" aria-hidden="true"></i> 7/7 KHỚP HOÀN TOÀN</span>
+          </div>
+        </div>
+        <table class="recon-table" aria-label="Bảng đối soát ngân hàng 7 kỳ">
+          <thead>
+            <tr>
+              <th>Kỳ thanh toán</th>
+              <th>Sao kê Bank (VND)</th>
+              <th>TikTok – IC</th>
+              <th>TikTok – AFF</th>
+              <th>Tổng TikTok</th>
+              <th>Chênh lệch</th>
+              <th style="text-align:center">Trạng thái</th>
+            </tr>
+          </thead>
+          <tbody id="reconTableBody"></tbody>
+          <tfoot>
+            <tr>
+              <td style="text-align:left;font-weight:700;">TỔNG 7 KỲ</td>
+              <td>453,245,862</td>
+              <td>442,495,332</td>
+              <td>10,750,530</td>
+              <td>453,245,862</td>
+              <td style="color:#059669;font-weight:700;">0</td>
+              <td style="text-align:center;"><span class="badge b-ok" style="padding:3px 10px;font-size:11px;">✓ BALANCED</span></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+
+    <!-- ROW 3 — PAYOUT TREND -->
+    <div class="row-full">
+      <div class="cc">
+        <div class="cc-title">Payout Trend — TikTok vs Bank (7 kỳ)</div>
+        <div class="cc-sub">Dual line kiểm tra consistency · Hai đường khớp hoàn toàn = Hệ thống tài chính minh bạch ✓</div>
+        <div class="cc-legend">
+          <div class="leg-item"><span class="leg-dot" style="background:#2563EB;"></span>Sao kê Bank (thực nhận)</div>
+          <div class="leg-item"><span class="leg-dot" style="background:#6B7280;border:1px dashed #6B7280;"></span>TikTok Total (IC + AFF)</div>
+        </div>
+        <div style="position:relative;width:100%;height:200px;">
+          <canvas id="payoutChart" role="img" aria-label="Biểu đồ đường đôi: Bank và TikTok hoàn toàn trùng khớp nhau trong 7 kỳ từ Dec/24 đến Jun/25. Đỉnh tháng Dec/24 là 132 triệu VND.">Bank statement và TikTok payout hoàn toàn khớp nhau 7/7 kỳ.</canvas>
+        </div>
+        <div style="margin-top:8px;padding:8px 12px;background:#ECFDF5;border-radius:7px;border:0.5px solid #A7F3D0;font-size:11px;color:#065F46;">
+          <strong>Accounting Insight:</strong> Hai đường line hoàn toàn chồng lên nhau → không có mismatch nào. Dec/24 (132M) và Mar/25 (90.5M) là 2 kỳ lớn nhất. Jun/25 thấp (11.6M) do kỳ chưa đóng.
+        </div>
+      </div>
+    </div>
+
+    <!-- ROW 4 — AFF CAMPAIGN + TREEMAP -->
+    <div class="row-half">
+      <div class="cc">
+        <div class="cc-title">AFF Campaign Performance</div>
+        <div class="cc-sub">Affiliate commission & GMV theo campaign · Romano / Wipro brand · AFF6 là best performer</div>
+        <div class="cc-legend">
+          <div class="leg-item"><span class="leg-dot" style="background:#2563EB;"></span>AFF Commission (triệu VND)</div>
+          <div class="leg-item" style="font-size:10px;color:#9CA3AF;margin-left:4px;">AFF6 chiếm 81% tổng comm</div>
+        </div>
+        <div style="position:relative;width:100%;height:200px;">
+          <canvas id="affChart" role="img" aria-label="Biểu đồ cột AFF campaigns: AFF6 9.9 triệu (lớn nhất, màu đậm), AFF5 2.2 triệu, AFF1 0.09 triệu, AFF2/AFF3 rất nhỏ.">AFF6 vượt trội với 9.9 triệu VND commission từ 2,191 đơn hàng.</canvas>
+        </div>
+        <div style="margin-top:10px;padding:8px 12px;background:#F5F3FF;border-radius:7px;border:0.5px solid #DDD6FE;">
+          <div style="font-size:10.5px;color:#4C1D95;line-height:1.5;"><strong>AFF6 Analysis:</strong> 2,191 đơn · GMV 252.2M · Commission 9.9M · Rate 3.9% (thấp hơn IC vì là affiliate partner commission, không phải creator commission)</div>
+        </div>
+      </div>
+      <div class="cc">
+        <div class="cc-title">Creator Payout Distribution</div>
+        <div class="cc-sub">Treemap phân bổ commission theo creator · Mức độ tập trung payout</div>
+        <div id="treemapContainer" aria-label="Treemap creator distribution"></div>
+        <table class="perf-tbl" style="margin-top:10px;">
+          <thead><tr><th>Creator</th><th style="text-align:right">Payout ước tính</th><th style="text-align:right">Comm Share</th><th style="text-align:right">Đơn</th></tr></thead>
+          <tbody>
+            <tr>
+              <td style="font-weight:600;color:#1E3A8A;">goc.cua.ru</td>
+              <td style="text-align:right;font-weight:600;">325.1M VND</td>
+              <td style="text-align:right;"><span class="badge b-err">53.7%</span></td>
+              <td style="text-align:right;">6,267</td>
+            </tr>
+            <tr>
+              <td style="font-weight:600;color:#3B82F6;">miibeo_</td>
+              <td style="text-align:right;font-weight:600;">279.9M VND</td>
+              <td style="text-align:right;"><span class="badge b-info">46.2%</span></td>
+              <td style="text-align:right;">33,152</td>
+            </tr>
+            <tr>
+              <td style="color:#9CA3AF;">anphuongtruong</td>
+              <td style="text-align:right;color:#9CA3AF;">0.5M VND</td>
+              <td style="text-align:right;"><span class="badge" style="background:#F3F4F6;color:#6B7280;">0.1%</span></td>
+              <td style="text-align:right;color:#9CA3AF;">39</td>
+            </tr>
+          </tbody>
+        </table>
+        <div style="margin-top:8px;padding:6px 10px;background:#FFFBEB;border-radius:6px;font-size:10.5px;color:#92400E;border:0.5px solid #FDE68A;">
+          <strong>miibeo_ Anomaly:</strong> Số đơn cao nhất (33,152 = 84%) nhưng commission thấp hơn goc.cua.ru (46.2% vs 53.7%) → Giá sản phẩm thấp hơn hoặc commission rate thấp hơn.
+        </div>
+      </div>
+    </div>
+
+    <!-- ROW 5 — ALERTS -->
+    <div class="row-full">
+      <div class="cc">
+        <div class="cc-title" style="margin-bottom:12px;">Operational Alerts — Cảnh báo vận hành cần hành động</div>
+        <div class="alert-grid">
+          <div class="alert-card ac-red">
+            <div class="ac-title" style="color:#991B1B;"><i class="ti ti-alert-circle" aria-hidden="true"></i>Creator Concentration Risk</div>
+            <div class="ac-body" style="color:#7F1D1D;">2 creators = 99.9% commission. Mất 1 creator là mất tất cả. HHI = 0.497 (ngưỡng nguy hiểm).</div>
+            <div class="ac-action" style="color:#DC2626;">→ Mở rộng lên 5-8 creators trong 60 ngày</div>
+          </div>
+          <div class="alert-card ac-orange">
+            <div class="ac-title" style="color:#92400E;"><i class="ti ti-arrow-back-up" aria-hidden="true"></i>Refund Spike — Tháng 5</div>
+            <div class="ac-body" style="color:#78350F;">Refund rate T5 = 0.42% (+282% vs T4). 10 đơn hoàn. Cần audit ngay batch đơn tháng 5.</div>
+            <div class="ac-action" style="color:#D97706;">→ Liên hệ shop, kiểm tra chất lượng sản phẩm</div>
+          </div>
+          <div class="alert-card ac-green">
+            <div class="ac-title" style="color:#065F46;"><i class="ti ti-circle-check" aria-hidden="true"></i>Bank Recon — 100% Match</div>
+            <div class="ac-body" style="color:#064E3B;">7/7 kỳ đối soát khớp hoàn toàn. Không có chênh lệch. Quy trình tài chính hoạt động tốt.</div>
+            <div class="ac-action" style="color:#059669;">→ Duy trì quy trình · Lưu trữ báo cáo hàng tháng</div>
+          </div>
+          <div class="alert-card ac-red">
+            <div class="ac-title" style="color:#991B1B;"><i class="ti ti-trending-down" aria-hidden="true"></i>GMV Declining — 4 tháng liên tiếp</div>
+            <div class="ac-body" style="color:#7F1D1D;">GMV giảm từ 1,551M (T2) xuống 153M (T6) — giảm 90%. Số creators không tăng = root cause.</div>
+            <div class="ac-action" style="color:#DC2626;">→ Kích hoạt lại campaigns · Tuyển creator mới</div>
+          </div>
+          <div class="alert-card ac-orange">
+            <div class="ac-title" style="color:#92400E;"><i class="ti ti-building-store" aria-hidden="true"></i>AFF Client Dependency</div>
+            <div class="ac-body" style="color:#78350F;">AFF6 (Romano/Wipro) = 81% tổng AFF commission. 1 client AFF = bottleneck. Rủi ro cao nếu hợp đồng kết thúc.</div>
+            <div class="ac-action" style="color:#D97706;">→ Đa dạng hóa AFF clients lên 3-5 brands</div>
+          </div>
+          <div class="alert-card ac-green">
+            <div class="ac-title" style="color:#065F46;"><i class="ti ti-rocket" aria-hidden="true"></i>AFF Growth Momentum</div>
+            <div class="ac-body" style="color:#064E3B;">AFF commission tăng 104x: từ 94K (T1) → 9.9M (T6). Mô hình AFF hoạt động. Cần nhân rộng.</div>
+            <div class="ac-action" style="color:#059669;">→ Mở rộng AFF model sang 5-10 brands mới</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <!-- END OPERATIONAL TAB -->
+
+  <!-- ==================== DOCS / BI DESIGN TAB ==================== -->
+  <div id="tab-docs" role="tabpanel" aria-labelledby="btn-docs">
+
+    <div class="section-badge" style="background:#F5F3FF;color:#4C1D95;">
+      <i class="ti ti-book-2" aria-hidden="true"></i> BI Design Framework — Tài liệu học thuật + DAX + Power Query · Dành cho: Giảng viên · BI Developer
+    </div>
+
+    <!-- DATA MODELING -->
+    <div class="data-panel">
+      <div class="dp-header" onclick="togglePanel(this)">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <i class="ti ti-topology-star-3" style="font-size:16px;color:#7C3AED" aria-hidden="true"></i>
+          <span style="font-size:13px;font-weight:600;color:#1A1A2E;">1. Data Modeling — Star Schema Design</span>
+          <span class="badge" style="background:#F5F3FF;color:#6B21A8;">Power BI Best Practice</span>
+        </div>
+        <i class="ti ti-chevron-down" style="color:#9CA3AF;transition:transform .2s;" aria-hidden="true"></i>
+      </div>
+      <div class="dp-body open">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+          <div>
+            <div style="font-size:12px;font-weight:600;color:#4C1D95;margin-bottom:8px;">Lý do chọn Star Schema:</div>
+            <div style="font-size:11.5px;color:#374151;line-height:1.7;">
+              <p style="margin-bottom:6px;">⭐ <strong>Query performance:</strong> Power BI VertiPaq engine tối ưu với star schema — joins đơn giản hơn snowflake, DAX filter propagation nhanh hơn.</p>
+              <p style="margin-bottom:6px;">⭐ <strong>Readability:</strong> Chỉ 1 bảng fact, nhiều dim — dễ maintain, dễ train người mới.</p>
+              <p style="margin-bottom:6px;">⭐ <strong>Scalability:</strong> Thêm dimension mới không ảnh hưởng fact table.</p>
+              <p>⭐ <strong>DAX compatibility:</strong> Many-to-one relationships hoạt động tốt nhất với star schema.</p>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:12px;font-weight:600;color:#1E3A8A;margin-bottom:10px;">Schema Diagram:</div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+              <div style="display:grid;grid-template-columns:auto 120px auto;gap:8px;align-items:center;width:100%;">
+                <div class="schema-dims">
+                  <div class="schema-dim"><div style="font-size:10px;font-weight:600;color:#1E3A8A;">Dim_Creator</div><div style="font-size:9px;color:#6B7280;">creator_id, username, tier, PIT_type</div></div>
+                  <div class="schema-dim"><div style="font-size:10px;font-weight:600;color:#1E3A8A;">Dim_Shop</div><div style="font-size:9px;color:#6B7280;">shop_id, shop_name, shop_code</div></div>
+                  <div class="schema-dim"><div style="font-size:10px;font-weight:600;color:#1E3A8A;">Dim_Campaign</div><div style="font-size:9px;color:#6B7280;">campaign_id, campaign_name, client</div></div>
+                </div>
+                <div class="schema-fact" style="text-align:center;">
+                  <div style="font-size:11px;font-weight:700;color:#991B1B;margin-bottom:4px;">Fact_Transaction</div>
+                  <div style="font-size:9px;color:#7F1D1D;line-height:1.5;">order_id · creator_id<br>shop_id · date_id<br>content_type_id<br>GMV · Commission<br>Refund_qty · Payment_ID</div>
+                </div>
+                <div class="schema-dims">
+                  <div class="schema-dim"><div style="font-size:10px;font-weight:600;color:#1E3A8A;">Dim_Date</div><div style="font-size:9px;color:#6B7280;">date, month, quarter, year, week</div></div>
+                  <div class="schema-dim"><div style="font-size:10px;font-weight:600;color:#1E3A8A;">Dim_ContentType</div><div style="font-size:9px;color:#6B7280;">type_id, type_name, category</div></div>
+                  <div class="schema-dim" style="border-color:#A7F3D0;"><div style="font-size:10px;font-weight:600;color:#065F46;">Fact_BankRecon</div><div style="font-size:9px;color:#6B7280;">month · bank_amt · tiktok_amt · variance</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- POWER QUERY CLEANING -->
+    <div class="data-panel">
+      <div class="dp-header" onclick="togglePanel(this)">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <i class="ti ti-wand" style="font-size:16px;color:#059669" aria-hidden="true"></i>
+          <span style="font-size:13px;font-weight:600;color:#1A1A2E;">2. Power Query — Data Cleaning Steps</span>
+          <span class="badge b-ok">14 bước xử lý</span>
+        </div>
+        <i class="ti ti-chevron-down" style="color:#9CA3AF;transition:transform .2s;" aria-hidden="true"></i>
+      </div>
+      <div class="dp-body">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+          <div>
+            <div style="font-size:11.5px;font-weight:600;color:#065F46;margin-bottom:8px;">Sheet: Detail cash-in</div>
+            <div style="font-size:11px;color:#374151;line-height:1.8;">
+              <div>1. <strong>Remove duplicates:</strong> Key = ID đơn hàng + ID đơn phụ</div>
+              <div>2. <strong>Creator name standardize:</strong> Trim, lowercase, remove trailing spaces (miibeo_ ✓)</div>
+              <div>3. <strong>Shop name normalize:</strong> Mapping table từ Code sheet</div>
+              <div>4. <strong>Date parsing:</strong> "Thời gian tạo đơn hàng" → Date type (dd/MM/yyyy HH:mm:ss)</div>
+              <div>5. <strong>Month extraction:</strong> = Date.Month([Thời gian tạo đơn hàng])</div>
+              <div>6. <strong>Null handling:</strong> Tiền thưởng hoa hồng → Replace null với 0</div>
+              <div>7. <strong>Data type:</strong> Giá, Số lượng, Commission fields → Decimal Number</div>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:11.5px;font-weight:600;color:#1E3A8A;margin-bottom:8px;">Sheet: AFF + Bank</div>
+            <div style="font-size:11px;color:#374151;line-height:1.8;">
+              <div>8. <strong>AFF merge:</strong> Join Detail cash-in-AFF vào Fact_Transaction qua Order ID</div>
+              <div>9. <strong>Campaign ID normalize:</strong> AFF1, AFF2... → Text type, no leading zeros</div>
+              <div>10. <strong>Bank date parse:</strong> TCB sheet "Ngày" column → Date type</div>
+              <div>11. <strong>Refund normalization:</strong> Số lượng bị trả lại / Số lượng bị hoàn tiền → Flag refund = true if > 0</div>
+              <div>12. <strong>Payment ID dedup:</strong> Group by Payment ID → sum amounts</div>
+              <div>13. <strong>Currency column:</strong> Remove constant "VND" column (data-ink ratio)</div>
+              <div>14. <strong>Order Status filter:</strong> Keep only "Completed" (toàn bộ đã là Completed)</div>
+            </div>
+          </div>
+        </div>
+        <pre class="code-block" style="margin-top:14px;"><code><span class="cmt">// Power Query M — Creator Name Standardization</span>
+<span class="kw">let</span>
+  Source = Excel.Workbook(File.Contents(<span class="str">"..."</span>)),
+  RawData = Source{[Name=<span class="str">"Detail cash-in"</span>]}[Data],
+  CleanedNames = Table.TransformColumns(RawData, {
+    {<span class="str">"Tên người dùng của nhà sáng tạo"</span>, 
+      <span class="kw">each</span> Text.Lower(Text.Trim(_)), type text}
+  }),
+  RemovedDupes = Table.Distinct(CleanedNames, 
+    {<span class="str">"ID đơn hàng"</span>, <span class="str">"ID đơn phụ"</span>}),
+  AddedMonth = Table.AddColumn(RemovedDupes, <span class="str">"Month_Order"</span>,
+    <span class="kw">each</span> Date.Month([Thời gian tạo đơn hàng]), Int64.Type),
+  FilledNulls = Table.FillDown(Table.ReplaceValue(
+    AddedMonth, null, 0, Replacer.ReplaceValue,
+    {<span class="str">"Tiền thưởng hoa hồng thực tế"</span>}),{})
+<span class="kw">in</span>
+  FilledNulls</code></pre>
+      </div>
+    </div>
+
+    <!-- DAX MEASURES -->
+    <div class="data-panel">
+      <div class="dp-header" onclick="togglePanel(this)">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <i class="ti ti-math-function" style="font-size:16px;color:#2563EB" aria-hidden="true"></i>
+          <span style="font-size:13px;font-weight:600;color:#1A1A2E;">3. DAX Measures — Power BI Formula Library</span>
+          <span class="badge b-err">9 measures · Production-ready</span>
+        </div>
+        <i class="ti ti-chevron-down" style="color:#9CA3AF;transition:transform .2s;" aria-hidden="true"></i>
+      </div>
+      <div class="dp-body">
+        <pre class="code-block"><code><span class="cmt">// ===== 1. Total GMV (North Star Metric) =====</span>
+<span class="fn">Total GMV</span> = SUM(Fact_Transaction[Actual commission base])
+
+<span class="cmt">// ===== 2. Total Commission =====</span>
+<span class="fn">Total Commission</span> = SUM(Fact_Transaction[Tổng hoa hồng thực tế])
+
+<span class="cmt">// ===== 3. Refund Rate =====</span>
+<span class="fn">Refund Rate %</span> = 
+<span class="kw">DIVIDE</span>(
+  SUM(Fact_Transaction[Số lượng bị trả lại]),
+  SUM(Fact_Transaction[Số lượng]),
+  0
+) * 100
+
+<span class="cmt">// ===== 4. Active Creator Count =====</span>
+<span class="fn">Active Creators</span> = 
+DISTINCTCOUNT(Fact_Transaction[Tên người dùng của nhà sáng tạo])
+
+<span class="cmt">// ===== 5. MoM Growth — Commission =====</span>
+<span class="fn">Commission MoM%</span> = 
+<span class="kw">VAR</span> CurrentMonth = [Total Commission]
+<span class="kw">VAR</span> PrevMonth = CALCULATE(
+  [Total Commission],
+  DATEADD(Dim_Date[Date], -1, MONTH)
+)
+<span class="kw">RETURN</span> DIVIDE(CurrentMonth - PrevMonth, PrevMonth, 0)
+
+<span class="cmt">// ===== 6. Commission Share % (per Creator) =====</span>
+<span class="fn">Commission Share %</span> = 
+DIVIDE(
+  [Total Commission],
+  CALCULATE([Total Commission], ALL(Dim_Creator)),
+  0
+)
+
+<span class="cmt">// ===== 7. Running Total GMV =====</span>
+<span class="fn">GMV Running Total</span> = 
+CALCULATE(
+  [Total GMV],
+  FILTER(
+    ALL(Dim_Date),
+    Dim_Date[Month_Num] &lt;= MAX(Dim_Date[Month_Num])
+  )
+)
+
+<span class="cmt">// ===== 8. Bank vs TikTok Variance =====</span>
+<span class="fn">Recon Variance</span> = 
+[Total Bank Received] - [Total TikTok Payout]
+
+<span class="cmt">// ===== 9. Payment Accuracy % =====</span>
+<span class="fn">Payment Accuracy %</span> = 
+<span class="kw">VAR</span> MatchedMonths = COUNTROWS(
+  FILTER(Fact_BankRecon, ABS([Recon Variance]) &lt; 10)
+)
+<span class="kw">RETURN</span> DIVIDE(MatchedMonths, COUNTROWS(Fact_BankRecon), 0)</code></pre>
+      </div>
+    </div>
+
+    <!-- BI PRINCIPLES -->
+    <div class="data-panel">
+      <div class="dp-header" onclick="togglePanel(this)">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <i class="ti ti-brain" style="font-size:16px;color:#D97706" aria-hidden="true"></i>
+          <span style="font-size:13px;font-weight:600;color:#1A1A2E;">4. BI Design Principles — Áp dụng từ bài giảng</span>
+          <span class="badge b-warn">8 nguyên tắc</span>
+        </div>
+        <i class="ti ti-chevron-down" style="color:#9CA3AF;transition:transform .2s;" aria-hidden="true"></i>
+      </div>
+      <div class="dp-body">
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;">
+          <div style="padding:12px;background:#F9FAFB;border-radius:8px;border:0.5px solid #E9EBF0;">
+            <div style="font-size:12px;font-weight:600;color:#1A1A2E;margin-bottom:6px;">⭐ North Star Metric</div>
+            <div style="font-size:11px;color:#374151;line-height:1.5;">Chọn <strong>Actual Commission Base</strong> làm NSM vì: (1) phản ánh doanh thu thực sự tạo ra giá trị, (2) không bị biến dạng bởi PIT hay chia sẻ commission, (3) creator performance và product performance đều được đo qua 1 metric duy nhất.</div>
+          </div>
+          <div style="padding:12px;background:#F9FAFB;border-radius:8px;border:0.5px solid #E9EBF0;">
+            <div style="font-size:12px;font-weight:600;color:#1A1A2E;margin-bottom:6px;">📐 Quy tắc 5-3-1</div>
+            <div style="font-size:11px;color:#374151;line-height:1.5;"><strong>5 KPIs:</strong> GMV, Commission, Orders, Refund Rate, Active Creators — mỗi KPI có status màu + MoM% + context. <strong>3 câu hỏi</strong> dashboard trả lời: Doanh thu có tăng? Creator có hiệu quả? Có rủi ro không? <strong>1 NSM</strong>: Commission Base xuyên suốt.</div>
+          </div>
+          <div style="padding:12px;background:#F9FAFB;border-radius:8px;border:0.5px solid #E9EBF0;">
+            <div style="font-size:12px;font-weight:600;color:#1A1A2E;margin-bottom:6px;">👁 F-Pattern Layout</div>
+            <div style="font-size:11px;color:#374151;line-height:1.5;">NSM banner → KPI row (trái sang phải) → Trend chart (full width) → Creator + Content (half-half) → Risk heatmap. Mắt người dùng di chuyển theo chữ F: từ trái, ngang, xuống, ngang. Thông tin quan trọng nhất luôn ở top-left.</div>
+          </div>
+          <div style="padding:12px;background:#F9FAFB;border-radius:8px;border:0.5px solid #E9EBF0;">
+            <div style="font-size:12px;font-weight:600;color:#1A1A2E;margin-bottom:6px;">🔗 Gestalt Principles</div>
+            <div style="font-size:11px;color:#374151;line-height:1.5;"><strong>Proximity:</strong> KPI cards group lại thành hàng. <strong>Similarity:</strong> Cùng màu accent xuyên suốt (FE2C55 = TikTok Red). <strong>Figure-Ground:</strong> Card trắng nổi trên nền xám. <strong>Continuity:</strong> Line chart thể hiện trend liên tục không đứt đoạn.</div>
+          </div>
+          <div style="padding:12px;background:#F9FAFB;border-radius:8px;border:0.5px solid #E9EBF0;">
+            <div style="font-size:12px;font-weight:600;color:#1A1A2E;margin-bottom:6px;">🖊 Data-Ink Ratio</div>
+            <div style="font-size:11px;color:#374151;line-height:1.5;">KHÔNG dùng: 3D charts, pie charts nhiều slice, gridlines đậm, decorative gradients. CÓ dùng: flat colors, muted gridlines (rgba(0,0,0,0.05)), white space, minimal borders (0.5px). Mỗi pixel phải mang thông tin.</div>
+          </div>
+          <div style="padding:12px;background:#F9FAFB;border-radius:8px;border:0.5px solid #E9EBF0;">
+            <div style="font-size:12px;font-weight:600;color:#1A1A2E;margin-bottom:6px;">📊 Chart Selection Logic</div>
+            <div style="font-size:11px;color:#374151;line-height:1.5;"><strong>Line chart:</strong> Trend theo thời gian (GMV/Commission 6 tháng). <strong>Horizontal bar:</strong> Ranking có tên dài (Creators, Shops). <strong>Grouped bar:</strong> So sánh 2 metrics cùng categories (Content Type). <strong>Donut:</strong> Part-of-whole (Creator share ≤ 4 categories). <strong>Heatmap table:</strong> Risk monitoring theo thời gian.</div>
+          </div>
+          <div style="padding:12px;background:#F9FAFB;border-radius:8px;border:0.5px solid #E9EBF0;">
+            <div style="font-size:12px;font-weight:600;color:#1A1A2E;margin-bottom:6px;">🎯 Leading vs Lagging</div>
+            <div style="font-size:11px;color:#374151;line-height:1.5;"><strong>Lagging (kết quả):</strong> GMV, Commission, Orders — đo những gì đã xảy ra. <strong>Leading (dự báo):</strong> Active Creators, Refund Rate, Creator Concentration — cho biết performance tương lai. Dashboard balance cả 2 loại để hỗ trợ cả báo cáo và quyết định proactive.</div>
+          </div>
+          <div style="padding:12px;background:#F9FAFB;border-radius:8px;border:0.5px solid #E9EBF0;">
+            <div style="font-size:12px;font-weight:600;color:#1A1A2E;margin-bottom:6px;">📖 Context is King</div>
+            <div style="font-size:11px;color:#374151;line-height:1.5;">Mỗi KPI có: (1) giá trị hiện tại, (2) MoM% so sánh, (3) context text giải thích ý nghĩa. Ví dụ: "Refund Rate 0.15%" → không đủ → thêm "T5 bất thường: 0.42% (+282%)" → người dùng hiểu ngay vấn đề cần xử lý.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EXECUTIVE SUMMARY -->
+    <div class="data-panel">
+      <div class="dp-header" onclick="togglePanel(this)" style="background:#EFF6FF;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <i class="ti ti-presentation" style="font-size:16px;color:#2563EB" aria-hidden="true"></i>
+          <span style="font-size:13px;font-weight:600;color:#1A1A2E;">5. Executive Summary — Talking Points cho thuyết trình</span>
+        </div>
+        <i class="ti ti-chevron-down" style="color:#9CA3AF;transition:transform .2s;" aria-hidden="true"></i>
+      </div>
+      <div class="dp-body">
+        <div style="font-size:12px;color:#374151;line-height:1.9;">
+          <p style="margin-bottom:8px;font-weight:600;color:#1A1A2E;">📌 Câu chuyện dữ liệu (6 tháng):</p>
+          <p style="margin-bottom:6px;"><strong>1. Business health:</strong> Tổng GMV 5.64 tỷ VND với commission rate 10.74% là kết quả tốt cho mô hình affiliate. Tuy nhiên trend đang giảm mạnh từ T2 (đỉnh 1.55 tỷ/tháng) xuống T6 (chỉ còn 153 triệu/tháng) — giảm 90% — là tín hiệu nghiêm trọng.</p>
+          <p style="margin-bottom:6px;"><strong>2. Creator insight:</strong> Với chỉ 3 creators mà 2 người chiếm 99.9% doanh thu, đây không phải vấn đề nhỏ — đây là rủi ro sinh tử của doanh nghiệp. HHI index 0.497 gấp đôi ngưỡng nguy hiểm 0.25.</p>
+          <p style="margin-bottom:6px;"><strong>3. Content strategy:</strong> Livestream chứng minh hiệu quả vượt trội với commission rate 16.2% so với Video chỉ 8.3%. Chiến lược nên shift sang tăng số buổi Livestream thay vì chỉ tập trung Video.</p>
+          <p style="margin-bottom:6px;"><strong>4. Financial health:</strong> Điểm sáng — đối soát ngân hàng 100% chính xác, 7/7 tháng không có chênh lệch. Hệ thống kế toán hoạt động minh bạch và đáng tin cậy.</p>
+          <p><strong>5. Growth opportunity:</strong> AFF model tăng trưởng 104x trong 6 tháng (94K → 9.9M commission). Đây là mô hình cần được nhân rộng sang nhiều brands hơn để giảm thiểu rủi ro tập trung vào IC model.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <!-- END DOCS TAB -->
+
+</div><!-- end db-shell -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+"use strict";
+var charts = {};
+var tabInited = { executive: false, operational: false, docs: false };
+
+function fmtVND(n) {
+  return n.toLocaleString('vi-VN');
+}
+
+function switchTab(name, btn) {
+  ['executive','operational','docs'].forEach(function(t) {
+    var el = document.getElementById('tab-' + t);
+    if (el) el.style.display = (t === name) ? 'block' : 'none';
+  });
+  document.querySelectorAll('.db-tab').forEach(function(b) {
+    b.classList.remove('active');
+    b.setAttribute('aria-selected', 'false');
+  });
+  if (btn) {
+    btn.classList.add('active');
+    btn.setAttribute('aria-selected', 'true');
+  }
+  setTimeout(function() {
+    Object.values(charts).forEach(function(c) { if (c && c.resize) c.resize(); });
+    if (!tabInited[name]) {
+      tabInited[name] = true;
+      if (name === 'executive') initExecutiveCharts();
+      if (name === 'operational') initOperationalCharts();
+    }
+  }, 60);
+}
+
+function togglePanel(header) {
+  var body = header.nextElementSibling;
+  var icon = header.querySelector('.ti-chevron-down');
+  if (body.classList.contains('open')) {
+    body.classList.remove('open');
+    body.style.display = 'none';
+    if (icon) icon.style.transform = 'rotate(0deg)';
+  } else {
+    body.classList.add('open');
+    body.style.display = 'block';
+    if (icon) icon.style.transform = 'rotate(180deg)';
+  }
+}
+
+function buildHeatmap() {
+  var months = ['T1','T2','T3','T4','T5','T6'];
+  var rates  = [0.11, 0.11, 0.27, 0.11, 0.42, 0.19];
+  var orders = [11365, 15417, 5313, 4542, 2301, 520];
+
+  function rateColor(r) {
+    if (r < 0.15) return { bg:'#D1FAE5', color:'#065F46' };
+    if (r < 0.30) return { bg:'#FEF3C7', color:'#92400E' };
+    return { bg:'#FEE2E2', color:'#991B1B' };
+  }
+
+  var html = '<div>';
+  // Header row
+  html += '<div style="display:flex;gap:5px;margin-bottom:5px;">';
+  html += '<div style="width:72px;font-size:10px;color:#9CA3AF;"></div>';
+  months.forEach(function(m) {
+    html += '<div style="flex:1;text-align:center;font-size:11px;font-weight:500;color:#6B7280;">' + m + '</div>';
+  });
+  html += '</div>';
+
+  // Refund rate row
+  html += '<div class="hm-row">';
+  html += '<div class="hm-label">Refund %</div>';
+  rates.forEach(function(r, i) {
+    var c = rateColor(r);
+    html += '<div class="hm-cell" style="background:' + c.bg + ';color:' + c.color + ';">' + r.toFixed(2) + '%</div>';
+  });
+  html += '</div>';
+
+  // Orders intensity row
+  html += '<div class="hm-row">';
+  html += '<div class="hm-label">Đơn (k)</div>';
+  orders.forEach(function(o) {
+    var intensity = (o / 15417) * 0.45 + 0.08;
+    html += '<div class="hm-cell" style="background:rgba(50,102,173,' + intensity.toFixed(2) + ');color:#1E3A8A;">';
+    html += (o >= 1000 ? (o/1000).toFixed(1)+'k' : o);
+    html += '</div>';
+  });
+  html += '</div>';
+
+  // GMV row
+  var gmvs = [1531.6, 1551.1, 989.9, 860.8, 549.2, 153.2];
+  html += '<div class="hm-row">';
+  html += '<div class="hm-label">GMV (tr)</div>';
+  gmvs.forEach(function(g) {
+    var intensity = (g / 1551.1) * 0.45 + 0.06;
+    html += '<div class="hm-cell" style="background:rgba(37,99,235,' + intensity.toFixed(2) + ');color:#1E3A8A;">' + g.toFixed(0) + '</div>';
+  });
+  html += '</div>';
+
+  // Legend
+  html += '<div style="display:flex;gap:14px;margin-top:10px;font-size:10px;color:#6B7280;">';
+  html += '<span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:#D1FAE5;display:inline-block;"></span>Normal</span>';
+  html += '<span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:#FEF3C7;display:inline-block;"></span>Watch</span>';
+  html += '<span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:#FEE2E2;display:inline-block;"></span>Alert</span>';
+  html += '</div></div>';
+
+  document.getElementById('heatmapContainer').innerHTML = html;
+}
+
+function buildReconTable() {
+  var data = [
+    { period:'Tháng 12/2024', bank:132001772, ic:132001772, aff:0 },
+    { period:'Tháng 1/2025',  bank:35356536,  ic:35314485,  aff:42051 },
+    { period:'Tháng 2/2025',  bank:21461201,  ic:21394751,  aff:66450 },
+    { period:'Tháng 3/2025',  bank:90505828,  ic:90505828,  aff:0 },
+    { period:'Tháng 4/2025',  bank:82016611,  ic:81999111,  aff:17500 },
+    { period:'Tháng 5/2025',  bank:80319268,  ic:78883669,  aff:1435599 },
+    { period:'Tháng 6/2025 ⚠ partial', bank:11584646, ic:2395716, aff:9188930 }
+  ];
+  var html = '';
+  data.forEach(function(row) {
+    var total = row.ic + row.aff;
+    var diff  = row.bank - total;
+    var ok    = Math.abs(diff) < 10;
+    var rowStyle = row.period.includes('partial') ? 'style="color:#D97706;"' : '';
+    html += '<tr ' + rowStyle + '>';
+    html += '<td>' + row.period + '</td>';
+    html += '<td>' + fmtVND(row.bank) + '</td>';
+    html += '<td>' + fmtVND(row.ic) + '</td>';
+    html += '<td>' + fmtVND(row.aff) + '</td>';
+    html += '<td>' + fmtVND(total) + '</td>';
+    html += '<td style="font-weight:600;color:' + (ok ? '#059669' : '#DC2626') + ';">' + (diff === 0 ? '0' : fmtVND(diff)) + '</td>';
+    html += '<td style="text-align:center;"><span class="badge ' + (ok ? 'b-ok' : 'b-err') + '">' + (ok ? '✓ KHỚP' : '✗ LỆCH') + '</span></td>';
+    html += '</tr>';
+  });
+  document.getElementById('reconTableBody').innerHTML = html;
+}
+
+function buildTreemap() {
+  var html = '<div class="treemap-wrap" aria-label="Treemap creator payout: goc.cua.ru 53.7%, miibeo_ 46.2%, anphuongtruong 0.1%">';
+  html += '<div class="tmap-blk" style="flex:53.7;background:#1E3A8A;">';
+  html += '<div class="tmap-name" style="color:#fff;">goc.cua.ru</div>';
+  html += '<div class="tmap-share" style="color:#fff;">53.7%</div>';
+  html += '<div class="tmap-val" style="color:rgba(255,255,255,.8);">325.1M VND</div></div>';
+  html += '<div class="tmap-blk" style="flex:46.2;background:#3B82F6;">';
+  html += '<div class="tmap-name" style="color:#fff;">miibeo_</div>';
+  html += '<div class="tmap-share" style="color:#fff;">46.2%</div>';
+  html += '<div class="tmap-val" style="color:rgba(255,255,255,.8);">279.9M VND</div></div>';
+  html += '<div class="tmap-blk" style="flex:0.5;background:#E5E7EB;min-width:30px;">';
+  html += '<div style="font-size:9px;color:#6B7280;writing-mode:vertical-rl;transform:rotate(180deg);">other</div></div>';
+  html += '</div>';
+  document.getElementById('treemapContainer').innerHTML = html;
+}
+
+function initExecutiveCharts() {
+  var months = ['T1','T2','T3','T4','T5','T6'];
+  var gmvData = [1531.6, 1551.1, 989.9, 860.8, 549.2, 153.2];
+  var commData = [162.4, 126.5, 115.8, 105.4, 73.9, 21.6];
+
+  // 1. TREND CHART
+  charts.trend = new Chart(document.getElementById('trendChart'), {
+    type: 'line',
+    data: {
+      labels: months,
+      datasets: [
+        { label: 'GMV (tr VND)', data: gmvData, borderColor:'#2563EB', backgroundColor:'rgba(37,99,235,.07)', fill:true, tension:.35, pointRadius:5, pointBackgroundColor:'#2563EB', borderWidth:2.5, yAxisID:'y' },
+        { label: 'Commission (tr VND)', data: commData, borderColor:'#16A34A', backgroundColor:'rgba(22,163,74,.07)', fill:true, tension:.35, pointRadius:5, pointBackgroundColor:'#16A34A', borderWidth:2.5, borderDash:[6,3], yAxisID:'y1' }
+      ]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      interaction:{ mode:'index', intersect:false },
+      plugins:{ legend:{ display:false }, tooltip:{ callbacks:{ label: function(c){ return c.dataset.label+': '+c.raw.toFixed(1)+' tr VND'; }}}},
+      scales:{
+        y:{ type:'linear', position:'left', ticks:{ callback:function(v){ return v+'tr'; }, font:{size:10}, color:'#9CA3AF' }, grid:{ color:'rgba(0,0,0,.04)' }},
+        y1:{ type:'linear', position:'right', ticks:{ callback:function(v){ return v+'tr'; }, font:{size:10}, color:'#16A34A' }, grid:{ drawOnChartArea:false }},
+        x:{ ticks:{ font:{size:11}, color:'#6B7280' }, grid:{ display:false }}
+      }
+    }
+  });
+
+  // 2. CREATOR BAR CHART
+  charts.creator = new Chart(document.getElementById('creatorChart'), {
+    type:'bar',
+    data:{
+      labels:['goc.cua.ru','miibeo_','anphuongtruong'],
+      datasets:[{ label:'Commission (tr VND)', data:[325.1,279.9,0.5], backgroundColor:['#1E3A8A','#3B82F6','#BFDBFE'], borderRadius:5, barThickness:22 }]
+    },
+    options:{
+      indexAxis:'y', responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ display:false }, tooltip:{ callbacks:{ label: function(c){ return 'Commission: '+c.raw.toFixed(1)+' triệu VND'; }}}},
+      scales:{
+        x:{ ticks:{ callback:function(v){ return v+'tr'; }, font:{size:10}, color:'#9CA3AF' }, grid:{ color:'rgba(0,0,0,.04)' }},
+        y:{ ticks:{ font:{size:11}, color:'#374151' }, grid:{ display:false }}
+      }
+    }
+  });
+
+  // 3. CREATOR SHARE DONUT
+  charts.creatorShare = new Chart(document.getElementById('creatorShareChart'), {
+    type:'doughnut',
+    data:{
+      labels:['goc.cua.ru','miibeo_','anphuongtruong'],
+      datasets:[{ data:[53.7,46.2,0.1], backgroundColor:['#1E3A8A','#3B82F6','#D1D5DB'], borderColor:['#fff','#fff','#fff'], borderWidth:3, hoverOffset:5 }]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false, cutout:'68%',
+      plugins:{ legend:{ display:false }, tooltip:{ callbacks:{ label: function(c){ return c.label+': '+c.raw+'%'; }}}}
+    }
+  });
+
+  // 4. CONTENT TYPE GROUPED BAR
+  charts.content = new Chart(document.getElementById('contentChart'), {
+    type:'bar',
+    data:{
+      labels:['Video','Livestream','Showcase','Link share'],
+      datasets:[
+        { label:'GMV (tỷ VND)', data:[3.755,1.623,0.258,0.0003], backgroundColor:['rgba(37,99,235,.8)','rgba(37,99,235,.75)','rgba(37,99,235,.65)','rgba(37,99,235,.5)'], borderRadius:4, yAxisID:'y' },
+        { label:'Commission (tr VND)', data:[310.4,263.3,31.8,0.02], backgroundColor:['rgba(22,163,74,.8)','rgba(22,163,74,.75)','rgba(22,163,74,.65)','rgba(22,163,74,.5)'], borderRadius:4, yAxisID:'y1' }
+      ]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ display:false }, tooltip:{ callbacks:{ label: function(c){ return c.datasetIndex===0 ? 'GMV: '+c.raw.toFixed(3)+' tỷ VND' : 'Commission: '+c.raw.toFixed(1)+' tr VND'; }}}},
+      scales:{
+        y:{ type:'linear', position:'left', ticks:{ callback:function(v){ return v+' tỷ'; }, font:{size:10}, color:'#2563EB' }, grid:{ color:'rgba(0,0,0,.04)' }},
+        y1:{ type:'linear', position:'right', ticks:{ callback:function(v){ return v+' tr'; }, font:{size:10}, color:'#16A34A' }, grid:{ drawOnChartArea:false }},
+        x:{ ticks:{ font:{size:11}, color:'#374151' }, grid:{ display:false }}
+      }
+    }
+  });
+
+  // 5. SHOP BAR CHART
+  charts.shop = new Chart(document.getElementById('shopChart'), {
+    type:'bar',
+    data:{
+      labels:['OBG VN','Grace & Glow','Moaw Moaws','Hasol Hair','GlowCode','Dentific','Lilith & Eve','MEDIHEAL'],
+      datasets:[{ label:'Commission (tr VND)', data:[146.9,91.5,54.9,51.8,43.4,42.7,13.8,13.4],
+        backgroundColor:['#1E3A8A','#2563EB','#3B82F6','#3B82F6','#60A5FA','#60A5FA','#93C5FD','#93C5FD'],
+        borderRadius:4, barThickness:16 }]
+    },
+    options:{
+      indexAxis:'y', responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ display:false }, tooltip:{ callbacks:{ label: function(c){ return 'Commission: '+c.raw.toFixed(1)+' triệu VND'; }}}},
+      scales:{
+        x:{ ticks:{ callback:function(v){ return v+' tr'; }, font:{size:10}, color:'#9CA3AF' }, grid:{ color:'rgba(0,0,0,.04)' }},
+        y:{ ticks:{ font:{size:10}, color:'#374151' }, grid:{ display:false }}
+      }
+    }
+  });
+
+  buildHeatmap();
+}
+
+function initOperationalCharts() {
+  var payoutMonths = ['Dec/24','T1/25','T2/25','T3/25','T4/25','T5/25','T6/25*'];
+  var bankData   = [132.0, 35.4, 21.5, 90.5, 82.0, 80.3, 11.6];
+  var tiktokData = [132.0, 35.4, 21.5, 90.5, 82.0, 80.3, 11.6];
+
+  // 6. PAYOUT TREND (dual line — perfectly overlapping shows perfect recon)
+  charts.payout = new Chart(document.getElementById('payoutChart'), {
+    type:'line',
+    data:{
+      labels: payoutMonths,
+      datasets:[
+        { label:'Bank received', data:bankData, borderColor:'#2563EB', backgroundColor:'rgba(37,99,235,.06)', fill:true, tension:.25, pointRadius:6, borderWidth:2.5 },
+        { label:'TikTok payout', data:tiktokData, borderColor:'#6B7280', borderDash:[7,4], tension:.25, pointRadius:4, pointStyle:'triangle', borderWidth:2 }
+      ]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      interaction:{ mode:'index', intersect:false },
+      plugins:{ legend:{ display:false }, tooltip:{ callbacks:{ label: function(c){ return c.dataset.label+': '+c.raw.toFixed(1)+' triệu VND'; }}}},
+      scales:{
+        y:{ ticks:{ callback:function(v){ return v+' tr'; }, font:{size:10}, color:'#9CA3AF' }, grid:{ color:'rgba(0,0,0,.04)' }},
+        x:{ ticks:{ font:{size:10}, color:'#6B7280', maxRotation:0 }, grid:{ display:false }}
+      }
+    }
+  });
+
+  // 7. AFF CAMPAIGN CHART
+  charts.aff = new Chart(document.getElementById('affChart'), {
+    type:'bar',
+    data:{
+      labels:['AFF1','AFF2','AFF3','AFF5','AFF6 ⭐'],
+      datasets:[{
+        label:'AFF Commission (tr VND)',
+        data:[0.095,0.018,0.013,2.186,9.919],
+        backgroundColor:['#DBEAFE','#DBEAFE','#DBEAFE','#3B82F6','#1E3A8A'],
+        borderRadius:5
+      }]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ display:false }, tooltip:{ callbacks:{ label: function(c){ return 'Commission: '+c.raw.toFixed(3)+' triệu VND'; }}}},
+      scales:{
+        y:{ ticks:{ callback:function(v){ return v+' tr'; }, font:{size:10}, color:'#9CA3AF' }, grid:{ color:'rgba(0,0,0,.04)' }},
+        x:{ ticks:{ font:{size:11}, color:'#374151' }, grid:{ display:false }}
+      }
+    }
+  });
+
+  buildReconTable();
+  buildTreemap();
+}
+
+// Initialize: show executive tab, hide others, init executive charts
+(function() {
+  ['executive','operational','docs'].forEach(function(t) {
+    var el = document.getElementById('tab-' + t);
+    if (el) el.style.display = (t === 'executive') ? 'block' : 'none';
+  });
+  // Close non-open data panels
+  document.querySelectorAll('.dp-body:not(.open)').forEach(function(p) {
+    p.style.display = 'none';
+  });
+  // Init executive charts after Chart.js loads
+  setTimeout(function() {
+    tabInited.executive = true;
+    initExecutiveCharts();
+  }, 150);
+})();
+</script>
+</body>
+</html>
