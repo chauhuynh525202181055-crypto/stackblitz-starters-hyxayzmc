@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TikTok Shop Affiliate · BI Dashboard</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ── Loading overlay ── -->
+<div id="loading-overlay" class="loading-overlay">
+  <div class="loading-spinner"></div>
+</div>
+
+<!-- ── Toast notification ── -->
+<div id="toast" class="toast"></div>
+
+<!-- ── Hidden file input ── -->
+<input type="file" id="jsonFileInput" accept=".json">
+
+<h2 class="sr-only">TikTok Shop Affiliate BI Dashboard — Executive & Operational Views.</h2>
+
+<div class="db-shell">
+
+  <!-- ════════════════════════════════════
+       HEADER
+  ════════════════════════════════════ -->
+  <div class="db-header">
+    <div class="logo-row">
+      <div class="logo-pill"><i class="ti ti-brand-tiktok"></i></div>
+      <div>
+        <div class="logo-text">TikTok Shop Affiliate <span style="font-weight:400;color:#9CA3AF;">· BI Dashboard</span></div>
+        <div class="logo-sub" id="meta-sub">Creator Commission Management · Dữ liệu thực tế</div>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <div class="tab-bar" role="tablist">
+        <button class="db-tab active" id="btn-executive"
+                onclick="switchTab('executive',this)"
+                role="tab" aria-selected="true" aria-controls="tab-executive">
+          <i class="ti ti-chart-dots-3"></i>Executive
+        </button>
+        <button class="db-tab" id="btn-operational"
+                onclick="switchTab('operational',this)"
+                role="tab" aria-selected="false" aria-controls="tab-operational">
+          <i class="ti ti-report-money"></i>Operational
+        </button>
+      </div>
+
+      <!-- Upload JSON button -->
+      <button class="upload-btn" onclick="document.getElementById('jsonFileInput').click()">
+        <i class="ti ti-upload"></i>Tải JSON mới
+      </button>
+    </div>
+
+    <div class="db-meta"><i class="ti ti-clock"></i><span id="meta-period">Kỳ: 6 months · T6/2025 partial</span></div>
+  </div>
+
+  <!-- ════════════════════════════════════
+       NSM BANNER
+  ════════════════════════════════════ -->
+  <div class="nsm-strip" role="complementary" aria-label="North Star Metric">
+    <div>
+      <div class="nsm-label">North Star Metric</div>
+      <div style="font-size:13px;font-weight:600;color:#1A1A2E;" id="nsm-label-text">Actual Commission Base</div>
+    </div>
+    <div class="nsm-divider"></div>
+    <div>
+      <div class="nsm-label">Tổng 6 kỳ báo cáo</div>
+      <div class="nsm-val" id="nsm-gmv">—</div>
+    </div>
+    <div class="nsm-divider"></div>
+    <div class="nsm-desc" id="nsm-desc-text">—</div>
+    <div class="nsm-rate">
+      <div class="nsm-label" style="text-align:right">Comm. Rate trung bình</div>
+      <div class="nsm-val" style="font-size:20px;color:#1A1A2E;" id="nsm-rate">—</div>
+      <div style="font-size:10px;color:#9CA3AF;" id="nsm-rate-calc">—</div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════
+       EXECUTIVE TAB
+  ════════════════════════════════════ -->
+  <div id="tab-executive" role="tabpanel" aria-labelledby="btn-executive">
+
+    <div class="section-badge" style="background:#EFF6FF;color:#1E3A8A;">
+      <i class="ti ti-chart-line"></i> Executive Dashboard — Tổng quan chiến lược · Dành cho: Chủ DN · Quản lý
+    </div>
+
+    <!-- ROW 1 — KPI CARDS -->
+    <div class="kpi-grid" role="region" aria-label="Chỉ số KPI chính">
+
+      <!-- GMV -->
+      <div class="kpi-card" style="border-top-color:#2563EB;">
+        <div class="kpi-lbl"><i class="ti ti-currency-dong" style="color:#2563EB"></i>Total GMV</div>
+        <div class="kpi-num"><span id="kpi-gmv-val">—</span> <span>tr VND</span></div>
+        <div class="kpi-chg down" id="kpi-gmv-chg-el">
+          <i class="ti ti-trending-down"></i><span id="kpi-gmv-chg">—</span>
+        </div>
+        <div class="kpi-ctx" id="kpi-gmv-ctx">—</div>
+      </div>
+
+      <!-- Commission -->
+      <div class="kpi-card" style="border-top-color:#16A34A;">
+        <div class="kpi-lbl"><i class="ti ti-receipt-2" style="color:#16A34A"></i>Total Commission</div>
+        <div class="kpi-num"><span id="kpi-comm-val">—</span> <span>tr VND</span></div>
+        <div class="kpi-chg down" id="kpi-comm-chg-el">
+          <i class="ti ti-trending-down"></i><span id="kpi-comm-chg">—</span>
+        </div>
+        <div class="kpi-ctx" id="kpi-comm-ctx">—</div>
+      </div>
+
+      <!-- Orders -->
+      <div class="kpi-card" style="border-top-color:#2563EB;">
+        <div class="kpi-lbl"><i class="ti ti-shopping-bag" style="color:#2563EB"></i>Total Orders</div>
+        <div class="kpi-num" id="kpi-ord-val">—</div>
+        <div class="kpi-chg down" id="kpi-ord-chg-el">
+          <i class="ti ti-trending-down"></i><span id="kpi-ord-chg">—</span>
+        </div>
+        <div class="kpi-ctx" id="kpi-ord-ctx">—</div>
+      </div>
+
+      <!-- Refund Rate -->
+      <div class="kpi-card" style="border-top-color:#F59E0B;">
+        <div class="kpi-lbl"><i class="ti ti-arrow-back-up" style="color:#F59E0B"></i>Refund Rate</div>
+        <div class="kpi-num"><span id="kpi-ref-val">—</span> <span>%</span></div>
+        <div class="kpi-chg warn"><i class="ti ti-alert-triangle"></i><span id="kpi-ref-chg">—</span></div>
+        <div class="kpi-ctx" id="kpi-ref-ctx">—</div>
+      </div>
+
+      <!-- Active Creators -->
+      <div class="kpi-card" style="border-top-color:#D97706;">
+        <div class="kpi-lbl"><i class="ti ti-users" style="color:#D97706"></i>Active Creators</div>
+        <div class="kpi-num" id="kpi-cr-val">—</div>
+        <div class="kpi-chg neu"><i class="ti ti-minus"></i>Không thay đổi 6 tháng</div>
+        <div class="kpi-ctx" id="kpi-cr-ctx" style="color:#DC2626;font-weight:600;">—</div>
+      </div>
+
+    </div><!-- /kpi-grid -->
+
+    <!-- ROW 2 — TREND CHART + INSIGHTS -->
+    <div class="row2">
+      <div class="cc">
+        <div class="cc-title">GMV &amp; Commission Trend — 6 Kỳ Báo Cáo</div>
+        <div class="cc-sub">Actual Commission Base (GMV thực tế) vs Hoa hồng thực nhận · Leading + Lagging Indicators</div>
+        <div class="cc-legend">
+          <div class="leg-item"><span class="leg-dot" style="background:#2563EB;"></span>GMV – Actual Comm. Base (trục trái)</div>
+          <div class="leg-item"><span class="leg-dot" style="background:#16A34A;border:1px dashed #16A34A;"></span>Commission thực tế (trục phải)</div>
+        </div>
+        <div style="position:relative;width:100%;height:230px;">
+          <canvas id="trendChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Strategic Insights -->
+      <div class="insight-panel" role="complementary" aria-label="Strategic Insights">
+        <div class="insight-header">
+          <i class="ti ti-bulb" style="color:#F59E0B;font-size:15px;"></i>Strategic Insights
+        </div>
+        <div id="insights-list"><!-- rendered by JS --></div>
+      </div>
+    </div>
+
+    <!-- ROW 3 — CREATOR PERFORMANCE -->
+    <div class="row-half">
+      <div class="cc">
+        <div class="cc-title">Creator Performance — Commission Ranking</div>
+        <div class="cc-sub">Top creators theo commission thực tế · Sorted descending · 6 kỳ tổng hợp</div>
+        <div class="cc-legend">
+          <div class="leg-item"><span class="leg-dot" style="background:#1E3A8A;"></span>Top 1</div>
+          <div class="leg-item"><span class="leg-dot" style="background:#3B82F6;"></span>Top 2</div>
+          <div class="leg-item"><span class="leg-dot" style="background:#D1D5DB;"></span>Others</div>
+        </div>
+        <div style="position:relative;width:100%;height:160px;">
+          <canvas id="creatorChart"></canvas>
+        </div>
+        <!-- Concentration Risk -->
+        <div class="conc-risk">
+          <div style="font-size:11px;font-weight:600;color:#991B1B;display:flex;align-items:center;gap:5px;">
+            <i class="ti ti-alert-triangle"></i><span id="conc-hhi">Creator Concentration Risk</span>
+          </div>
+          <div class="conc-bar" id="conc-bar"></div>
+          <div style="font-size:10px;color:#991B1B;margin-top:4px;" id="conc-text">—</div>
+        </div>
+      </div>
+
+      <div class="cc">
+        <div class="cc-title">Commission Share — Creator Dependency Map</div>
+        <div class="cc-sub">Mức độ phụ thuộc theo creator · Donut chart + Commission breakdown</div>
+        <div style="display:flex;gap:16px;align-items:center;">
+          <div style="position:relative;width:170px;height:170px;flex-shrink:0;">
+            <canvas id="creatorShareChart"></canvas>
+          </div>
+          <div style="flex:1;">
+            <table class="perf-tbl">
+              <thead><tr><th>Creator</th><th style="text-align:right">Commission</th><th style="text-align:right">Share</th></tr></thead>
+              <tbody id="creator-table-body"><!-- rendered by JS --></tbody>
+            </table>
+            <div style="margin-top:12px;padding:8px 10px;background:#FFFBEB;border-radius:6px;border:0.5px solid #FCD34D;">
+              <div style="font-size:10.5px;color:#92400E;line-height:1.5;">
+                <strong>Leading Indicator:</strong> Số creator active không tăng → commission growth sẽ chạm trần sớm. Cần thêm ít nhất 3-5 creator để phân tán rủi ro.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROW 4 — CONTENT TYPE -->
+    <div class="row-full">
+      <div class="cc">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:4px;">
+          <div>
+            <div class="cc-title">Content Type Performance — GMV &amp; Commission</div>
+            <div class="cc-sub">4 loại content: Video · Livestream · Showcase · Link share · Hiệu quả trên 2 metrics</div>
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <span class="tag-pill" style="background:#FFF0F3;color:#9B1C1C;"><i class="ti ti-trending-up"></i>Video: đơn hàng cao nhất</span>
+            <span class="tag-pill" style="background:#F0FDFA;color:#134E4A;"><i class="ti ti-flame"></i>Livestream: Comm/GMV cao nhất</span>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+          <div>
+            <div class="cc-legend" style="margin-bottom:8px;">
+              <div class="leg-item"><span class="leg-dot" style="background:#2563EB;"></span>GMV (tỷ VND, trục trái)</div>
+              <div class="leg-item"><span class="leg-dot" style="background:#16A34A;border:1px dashed #16A34A;"></span>Commission (tr VND, trục phải)</div>
+            </div>
+            <div style="position:relative;width:100%;height:200px;">
+              <canvas id="contentChart"></canvas>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:600;color:#6B7280;margin-bottom:8px;">Phân tích sâu: Commission Rate theo Content Type</div>
+            <table class="perf-tbl" style="font-size:11px;">
+              <thead><tr>
+                <th>Content</th>
+                <th style="text-align:right">GMV</th>
+                <th style="text-align:right">Commission</th>
+                <th style="text-align:right">Rate</th>
+                <th style="text-align:right">Đơn</th>
+              </tr></thead>
+              <tbody id="content-table-body"><!-- rendered by JS --></tbody>
+            </table>
+            <div style="margin-top:10px;padding:8px 10px;background:#DCFCE7;border-radius:6px;border:0.5px solid #86EFAC;">
+              <div style="font-size:10.5px;color:#14532D;line-height:1.5;">
+                <strong>Data Insight:</strong> Livestream commission rate gấp đôi Video. Mặc dù ít đơn hơn, mỗi đồng GMV từ Livestream tạo ra hoa hồng cao gấp đôi. Đây là cơ hội lớn nhất để tối ưu biên lợi nhuận.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROW 5 — HEATMAP + TOP SHOPS -->
+    <div class="row-half">
+      <div class="cc">
+        <div class="cc-title">Risk Monitoring — Refund Rate Heatmap</div>
+        <div class="cc-sub">Phát hiện bất thường theo kỳ · Traffic light color system</div>
+        <div id="heatmapContainer"></div>
+        <div style="margin-top:12px;padding:10px 12px;background:#FEF2F2;border-radius:8px;border:0.5px solid #FECACA;">
+          <div style="font-size:11px;font-weight:600;color:#991B1B;margin-bottom:3px;display:flex;align-items:center;gap:5px;">
+            <i class="ti ti-alert-triangle"></i>Refund spike bất thường
+          </div>
+          <div style="font-size:10.5px;color:#7F1D1D;line-height:1.5;">
+            Tháng có refund rate cao nhất là bất thường. Cần kiểm tra: sản phẩm lỗi? giao hàng chậm? review của creator không đúng?
+          </div>
+        </div>
+      </div>
+
+      <div class="cc">
+        <div class="cc-title">Top Shops — Commission Generated</div>
+        <div class="cc-sub">Top 8 shops theo hoa hồng tạo ra · 6 kỳ · OBG: biên cao nhất</div>
+        <div class="cc-legend">
+          <div class="leg-item"><span class="leg-dot" style="background:#2563EB;"></span>Commission (triệu VND)</div>
+        </div>
+        <div style="position:relative;width:100%;height:250px;">
+          <canvas id="shopChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /tab-executive -->
+
+  <!-- ════════════════════════════════════
+       OPERATIONAL TAB
+  ════════════════════════════════════ -->
+  <div id="tab-operational" role="tabpanel" aria-labelledby="btn-operational" style="display:none;">
+
+    <div class="section-badge" style="background:#EFF6FF;color:#1E3A8A;">
+      <i class="ti ti-report-money"></i> Operational Dashboard — Vận hành &amp; Kế toán · Dành cho: Kế toán · Vận hành · AFF Manager
+    </div>
+
+    <!-- ROW 1 — OPERATIONAL KPIs -->
+    <div class="kpi-grid">
+
+      <div class="kpi-card" style="border-top-color:#2563EB;">
+        <div class="kpi-lbl"><i class="ti ti-bank" style="color:#2563EB"></i>Total Bank Received</div>
+        <div class="kpi-num"><span id="op-bank-val">—</span> <span>tr VND</span></div>
+        <div class="kpi-chg neu">7 kỳ từ TikTok</div>
+        <div class="kpi-ctx" id="op-bank-ctx">—</div>
+      </div>
+
+      <div class="kpi-card" style="border-top-color:#16A34A;">
+        <div class="kpi-lbl"><i class="ti ti-check-box" style="color:#16A34A"></i>Reconciliation Accuracy</div>
+        <div class="kpi-num"><span id="op-recon-val">100</span> <span>%</span></div>
+        <div class="kpi-chg up"><i class="ti ti-circle-check"></i>7/7 kỳ khớp hoàn toàn</div>
+        <div class="kpi-ctx">Chênh lệch = 0 VND · Minh bạch</div>
+      </div>
+
+      <div class="kpi-card" style="border-top-color:#F59E0B;">
+        <div class="kpi-lbl"><i class="ti ti-clock" style="color:#F59E0B"></i>Pending (T6 est.)</div>
+        <div class="kpi-num"><span id="op-pending-val">—</span> <span>tr VND</span></div>
+        <div class="kpi-chg warn">T6 partial · chưa kết kỳ</div>
+        <div class="kpi-ctx">Commission T6 chưa đủ dữ liệu</div>
+      </div>
+
+      <div class="kpi-card" style="border-top-color:#16A34A;">
+        <div class="kpi-lbl"><i class="ti ti-users-group" style="color:#16A34A"></i>AFF Commission Total</div>
+        <div class="kpi-num"><span id="op-aff-comm-val">—</span> <span>tr VND</span></div>
+        <div class="kpi-chg up"><i class="ti ti-trending-up"></i><span id="op-aff-comm-chg">—</span></div>
+        <div class="kpi-ctx" id="op-aff-comm-ctx">—</div>
+      </div>
+
+      <div class="kpi-card" style="border-top-color:#2563EB;">
+        <div class="kpi-lbl"><i class="ti ti-timeline" style="color:#2563EB"></i>Active AFF Campaigns</div>
+        <div class="kpi-num" id="op-campaigns-val">—</div>
+        <div class="kpi-chg up"><i class="ti ti-trending-up"></i>AFF6 mới nhất &amp; lớn nhất</div>
+        <div class="kpi-ctx">AFF1–AFF6 · Brand Romano/Wipro</div>
+      </div>
+
+    </div>
+
+    <!-- ROW 2 — BANK RECONCILIATION -->
+    <div class="row-full">
+      <div class="cc">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <div>
+            <div class="cc-title">Bank Reconciliation Matrix — Đối soát TCB</div>
+            <div class="cc-sub">TikTok payout (IC + AFF) vs Bank statement · Dashboard kế toán thực tế</div>
+          </div>
+          <span class="badge b-ok" style="padding:4px 10px;font-size:11px;">
+            <i class="ti ti-circle-check"></i> 7/7 KHỚP HOÀN TOÀN
+          </span>
+        </div>
+        <table class="recon-table" aria-label="Bảng đối soát ngân hàng">
+          <thead>
+            <tr>
+              <th>Kỳ thanh toán</th>
+              <th>Sao kê Bank (VND)</th>
+              <th>TikTok – IC</th>
+              <th>TikTok – AFF</th>
+              <th>Tổng TikTok</th>
+              <th>Chênh lệch</th>
+              <th style="text-align:center">Trạng thái</th>
+            </tr>
+          </thead>
+          <tbody id="reconTableBody"><!-- rendered by JS --></tbody>
+          <tfoot>
+            <tr>
+              <td style="text-align:left;font-weight:700;">TỔNG</td>
+              <td id="recon-foot-bank">—</td>
+              <td id="recon-foot-ic">—</td>
+              <td id="recon-foot-aff">—</td>
+              <td id="recon-foot-total">—</td>
+              <td id="recon-foot-diff" style="color:#059669;font-weight:700;">0</td>
+              <td style="text-align:center;"><span class="badge b-ok" style="padding:3px 10px;font-size:11px;">✓ BALANCED</span></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+
+    <!-- ROW 3 — PAYOUT TREND -->
+    <div class="row-full">
+      <div class="cc">
+        <div class="cc-title">Payout Trend — TikTok vs Bank</div>
+        <div class="cc-sub">Dual line kiểm tra consistency · Hai đường khớp hoàn toàn = Hệ thống tài chính minh bạch ✓</div>
+        <div class="cc-legend">
+          <div class="leg-item"><span class="leg-dot" style="background:#2563EB;"></span>Sao kê Bank (thực nhận)</div>
+          <div class="leg-item"><span class="leg-dot" style="background:#6B7280;border:1px dashed #6B7280;"></span>TikTok Total (IC + AFF)</div>
+        </div>
+        <div style="position:relative;width:100%;height:200px;">
+          <canvas id="payoutChart"></canvas>
+        </div>
+        <div style="margin-top:8px;padding:8px 12px;background:#ECFDF5;border-radius:7px;border:0.5px solid #A7F3D0;font-size:11px;color:#065F46;">
+          <strong>Accounting Insight:</strong> Hai đường line hoàn toàn chồng lên nhau → không có mismatch nào. Hệ thống kế toán hoạt động minh bạch và đáng tin cậy.
+        </div>
+      </div>
+    </div>
+
+    <!-- ROW 4 — AFF CAMPAIGN + CREATOR PAYOUT DISTRIBUTION -->
+    <div class="row-half">
+      <div class="cc">
+        <div class="cc-title">AFF Campaign Performance</div>
+        <div class="cc-sub">Affiliate commission &amp; GMV theo campaign · Romano / Wipro brand</div>
+        <div class="cc-legend">
+          <div class="leg-item"><span class="leg-dot" style="background:#2563EB;"></span>AFF Commission (triệu VND)</div>
+        </div>
+        <div style="position:relative;width:100%;height:200px;">
+          <canvas id="affChart"></canvas>
+        </div>
+        <div style="margin-top:10px;padding:8px 12px;background:#F5F3FF;border-radius:7px;border:0.5px solid #DDD6FE;">
+          <div style="font-size:10.5px;color:#4C1D95;line-height:1.5;">
+            <strong>AFF6 Analysis:</strong> Campaign lớn nhất, chiếm 81% tổng AFF commission. Rate thấp hơn IC vì là affiliate partner commission.
+          </div>
+        </div>
+      </div>
+
+      <div class="cc">
+        <div class="cc-title">Creator Payout Distribution</div>
+        <div class="cc-sub">Treemap phân bổ commission theo creator · Mức độ tập trung payout</div>
+        <div id="treemapContainer"></div>
+        <table class="perf-tbl" style="margin-top:10px;">
+          <thead><tr>
+            <th>Creator</th>
+            <th style="text-align:right">Payout ước tính</th>
+            <th style="text-align:right">Comm Share</th>
+            <th style="text-align:right">Đơn</th>
+          </tr></thead>
+          <tbody id="creator-payout-body"><!-- rendered by JS --></tbody>
+        </table>
+        <div style="margin-top:8px;padding:6px 10px;background:#FFFBEB;border-radius:6px;font-size:10.5px;color:#92400E;border:0.5px solid #FDE68A;">
+          <strong>Anomaly:</strong> Creator với số đơn cao nhất không nhất thiết có commission cao nhất → Giá sản phẩm và commission rate khác nhau giữa các creator.
+        </div>
+      </div>
+    </div>
+
+    <!-- ROW 5 — OPERATIONAL ALERTS -->
+    <div class="row-full">
+      <div class="cc">
+        <div class="cc-title" style="margin-bottom:12px;">Operational Alerts — Cảnh báo vận hành cần hành động</div>
+        <div class="alert-grid" id="alerts-container"><!-- rendered by JS --></div>
+      </div>
+    </div>
+
+  </div><!-- /tab-operational -->
+
+</div><!-- /db-shell -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
